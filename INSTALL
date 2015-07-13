@@ -1,0 +1,9 @@
+Building EuropeCoin
+
+See doc/readme-qt.rst for instructions on building EuropeCoin QT,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of SummerCoin.
+
+See doc/build-*.txt for instructions on building europecoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of EuropeCoin.
