@@ -71,6 +71,27 @@ string AccountFromValue(const Value& value)
     return strAccount;
 }
 
+// Sciakysystem: some useful changes
+
+// Get wallet lock status
+std::string walletstatus() {
+    if (pwalletMain->IsLocked() && !fWalletUnlockStakingOnly)
+        return "locked";
+    else if (fWalletUnlockStakingOnly)
+        return "unlocked for staking only";
+    else return "unlocked";
+}
+
+// Convert epochtime format to human readable; it's used to give an readable "unlocked until" time
+string humanreadabledate(int64_t epoch) {
+    char str[30];
+    time_t time = epoch;
+    struct tm ts;
+    ts = *localtime(&time);
+    strftime(str, sizeof(str), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
+    return str;
+}
+
 Value getinfo(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 0)
@@ -104,9 +125,22 @@ Value getinfo(const Array& params, bool fHelp)
     obj.push_back(Pair("keypoolsize",   (int)pwalletMain->GetKeyPoolSize()));
     obj.push_back(Pair("paytxfee",      ValueFromAmount(nTransactionFee)));
     obj.push_back(Pair("mininput",      ValueFromAmount(nMinimumInputValue)));
-    if (pwalletMain->IsCrypted())
+    // Sciakysystem - modified the "unlock_until" behavior: show the unlock time limit if the wallet is
+    // locked or unlocked-for-staking-only makes no sense
+    if (pwalletMain->IsCrypted() && !pwalletMain->IsLocked() && !fWalletUnlockStakingOnly)
         obj.push_back(Pair("unlocked_until", (boost::int64_t)nWalletUnlockTime / 1000));
+    // Sciakysystem - added an element which shows in a human readable way the "unlock_until" time limit
+    if (pwalletMain->IsCrypted() && !pwalletMain->IsLocked() && !fWalletUnlockStakingOnly)
+        obj.push_back(Pair("unlocked_until_hr", humanreadabledate((boost::int64_t)nWalletUnlockTime / 1000)));
     obj.push_back(Pair("errors",        GetWarnings("statusbar")));
+    // Sciakysystem - added informations about encryption and lock status
+    obj.push_back(Pair("wallet",        walletstatus()));
+    obj.push_back(Pair("encrypted",     (pwalletMain->IsCrypted() ? "true" : "false")));
+    // Sciakysystem - whether the wallet is synced or not
+    if (GetNumBlocksOfPeers() > nBestHeight)
+        obj.push_back(Pair("synced",    "false"));
+    else
+        obj.push_back(Pair("synced",     "true"));
     return obj;
 }
 
