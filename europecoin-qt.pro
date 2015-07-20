@@ -4,7 +4,7 @@ macx:TARGET = "Europecoin"
 VERSION = 2.0.0
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE QT_DISABLE_DEPRECATED_BEFORE=0
 CONFIG += no_include_pwd
 CONFIG += thread
@@ -83,7 +83,7 @@ contains(USE_QRCODE, 1) {
 #  or: qmake "USE_UPNP=0" (disabled by default)
 #  or: qmake "USE_UPNP=-" (not supported)
 # miniupnpc (http://miniupnp.free.fr/files/) must be installed for support
-USE_UPNP=0
+USE_UPNP=-
 contains(USE_UPNP, -) {
     message(Building without UPNP support)
 } else {
@@ -166,7 +166,13 @@ SOURCES += src/txdb-leveldb.cpp \
     src/luffa.c \
     src/shavite.c \
     src/simd.c \
-    src/skein.c
+    src/skein.c \
+    src/qt/qcustomplot.cpp \
+    src/qt/statisticspage.cpp \
+    src/qt/coinstats.cpp \
+    src/qt/tradingstatsBittrex.cpp \
+    src/qt/tradingstatsBleutrade.cpp \
+    src/qt/tradingstats.cpp
 
 contains(USE_O3, 1) {
     message(Building O3 optimization flag)
@@ -283,7 +289,13 @@ HEADERS += src/qt/bitcoingui.h \
     src/sph_skein.h \
     src/sph_types.h \
     src/threadsafety.h \
-    src/txdb-leveldb.h
+    src/txdb-leveldb.h \
+    src/qt/qcustomplot.h \
+    src/qt/statisticspage.h \
+    src/qt/coinstats.h \
+    src/qt/tradingstatsBittrex.h \
+    src/qt/tradingstatsBleutrade.h \
+    src/qt/tradingstats.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -368,7 +380,12 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/optionsdialog.ui
+    src/qt/forms/optionsdialog.ui \
+    src/qt/forms/statisticspage.ui \
+    src/qt/forms/coinstats.ui \
+    src/qt/forms/tradingstatsBittrex.ui \
+    src/qt/forms/tradingstatsBleutrade.ui \
+    src/qt/forms/tradingstats.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
