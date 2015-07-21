@@ -221,19 +221,19 @@ void TradingStatsBleutrade::bleutradeMarketSummary(QNetworkReply* response)
     updateLabel(ui->lblBleutradeHighBtc,
                 _bleutradeMarketSummary->getHighCurrent(double()),
                 _bleutradeMarketSummary->getHighPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     updateLabel(ui->lblBleutradeLowBtc,
                 _bleutradeMarketSummary->getLowCurrent(double()),
                 _bleutradeMarketSummary->getLowPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     updateLabel(ui->lblBleutradeCloseBtc,
                 _bleutradeMarketSummary->getPrevDayCurrent(double()),
                 _bleutradeMarketSummary->getPrevDayPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     double changeCurrent = (_bleutradeMarketSummary->getLastCurrent(double()) - _bleutradeMarketSummary->getPrevDayCurrent(double())) / _bleutradeMarketSummary->getPrevDayCurrent(double()) * 100;
@@ -247,7 +247,7 @@ void TradingStatsBleutrade::bleutradeMarketSummary(QNetworkReply* response)
                 changeCurrent,
                 changeLast,
                 changeDirection,
-                QString("%"),
+                QString("% "),
                 2);
 
     updateLabel(ui->lblBleutradeVolumeUsd,
@@ -271,38 +271,38 @@ void TradingStatsBleutrade::bleutradeMarketSummary(QNetworkReply* response)
     updateLabel(ui->lblBleutradeLastBtc,
                 _bleutradeMarketSummary->getLastCurrent(double()),
                 _bleutradeMarketSummary->getLastPrev(double()),
-                QString("B"),
+                QString("BTC "),
 
                 8);
 
     updateLabel(ui->lblBleutradeLastUsd,
                 _bleutradeMarketSummary->getLastCurrent(double()) * _dBtcPriceCurrentBleutrade,
                 _bleutradeMarketSummary->getLastPrev(double()) * _dBtcPriceCurrentBleutrade,
-                QString::fromUtf8("$"),
+                QString::fromUtf8("$ "),
                 8);
 
     updateLabel(ui->lblBleutradeAskBtc,
                 _bleutradeMarketSummary->getAskCurrent(double()),
                 _bleutradeMarketSummary->getAskPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     updateLabel(ui->lblBleutradeAskUsd,
                 _bleutradeMarketSummary->getAskCurrent(double()) * _dBtcPriceCurrentBleutrade,
                 _bleutradeMarketSummary->getAskPrev(double()) * _dBtcPriceCurrentBleutrade,
-                QString::fromUtf8("$"),
+                QString::fromUtf8("$ "),
                 8);
 
     updateLabel(ui->lblBleutradeBidBtc,
                 _bleutradeMarketSummary->getBidCurrent(double()),
                 _bleutradeMarketSummary->getBidPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     updateLabel(ui->lblBleutradeBidUsd,
                 _bleutradeMarketSummary->getBidCurrent(double()) * _dBtcPriceCurrentBleutrade,
                 _bleutradeMarketSummary->getBidPrev(double()) * _dBtcPriceCurrentBleutrade,
-                QString::fromUtf8("$"),
+                QString::fromUtf8("$ "),
                 8);
 
     _bleutradeMarketSummary->setAskPrev(_bleutradeMarketSummary->getAskCurrent(double()));

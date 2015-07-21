@@ -222,19 +222,19 @@ void TradingStatsBittrex::bittrexMarketSummary(QNetworkReply* response)
     updateLabel(ui->lblBittrexHighBtc,
                 _bittrexMarketSummary->getHighCurrent(double()),
                 _bittrexMarketSummary->getHighPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     updateLabel(ui->lblBittrexLowBtc,
                 _bittrexMarketSummary->getLowCurrent(double()),
                 _bittrexMarketSummary->getLowPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     updateLabel(ui->lblBittrexCloseBtc,
                 _bittrexMarketSummary->getPrevDayCurrent(double()),
                 _bittrexMarketSummary->getPrevDayPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     double changeCurrent = (_bittrexMarketSummary->getLastCurrent(double()) - _bittrexMarketSummary->getPrevDayCurrent(double())) / _bittrexMarketSummary->getPrevDayCurrent(double()) * 100;
@@ -248,7 +248,7 @@ void TradingStatsBittrex::bittrexMarketSummary(QNetworkReply* response)
                 changeCurrent,
                 changeLast,
                 changeDirection,
-                QString("%"),
+                QString("% "),
                 2);
 
     updateLabel(ui->lblBittrexVolumeUsd,
@@ -272,38 +272,38 @@ void TradingStatsBittrex::bittrexMarketSummary(QNetworkReply* response)
     updateLabel(ui->lblBittrexLastBtc,
                 _bittrexMarketSummary->getLastCurrent(double()),
                 _bittrexMarketSummary->getLastPrev(double()),
-                QString("B"),
+                QString("BTC "),
 
                 8);
 
     updateLabel(ui->lblBittrexLastUsd,
                 _bittrexMarketSummary->getLastCurrent(double()) * _dBtcPriceCurrentBittrex,
                 _bittrexMarketSummary->getLastPrev(double()) * _dBtcPriceCurrentBittrex,
-                QString::fromUtf8("$"),
+                QString::fromUtf8("$ "),
                 8);
 
     updateLabel(ui->lblBittrexAskBtc,
                 _bittrexMarketSummary->getAskCurrent(double()),
                 _bittrexMarketSummary->getAskPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     updateLabel(ui->lblBittrexAskUsd,
                 _bittrexMarketSummary->getAskCurrent(double()) * _dBtcPriceCurrentBittrex,
                 _bittrexMarketSummary->getAskPrev(double()) * _dBtcPriceCurrentBittrex,
-                QString::fromUtf8("$"),
+                QString::fromUtf8("$ "),
                 8);
 
     updateLabel(ui->lblBittrexBidBtc,
                 _bittrexMarketSummary->getBidCurrent(double()),
                 _bittrexMarketSummary->getBidPrev(double()),
-                QString("B"),
+                QString("BTC "),
                 8);
 
     updateLabel(ui->lblBittrexBidUsd,
                 _bittrexMarketSummary->getBidCurrent(double()) * _dBtcPriceCurrentBittrex,
                 _bittrexMarketSummary->getBidPrev(double()) * _dBtcPriceCurrentBittrex,
-                QString::fromUtf8("$"),
+                QString::fromUtf8("$ "),
                 8);
 
     _bittrexMarketSummary->setAskPrev(_bittrexMarketSummary->getAskCurrent(double()));
