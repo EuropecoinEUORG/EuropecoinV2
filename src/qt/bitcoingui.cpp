@@ -245,7 +245,7 @@ void BitcoinGUI::createActions()
     addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
     tabGroup->addAction(addressBookAction);
 
-    statisticsAction = new QAction(QIcon(""), tr("Statisti&cs"), this);
+    statisticsAction = new QAction(QIcon(":/icons/statistics"), tr("Statisti&cs"), this);
     statisticsAction->setToolTip(tr("Europecoin network and financial statistics"));
     statisticsAction->setCheckable(true);
     statisticsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
@@ -348,6 +348,7 @@ void BitcoinGUI::createToolBars()
 {
     QToolBar *toolbar = addToolBar(tr("Tabs toolbar"));
     toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    toolbar->setStyleSheet("background: transparent; border: none;");
     toolbar->addAction(overviewAction);
     toolbar->addAction(sendCoinsAction);
     toolbar->addAction(receiveCoinsAction);
@@ -356,6 +357,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(statisticsAction);
 
     QToolBar *toolbar2 = addToolBar(tr("Actions toolbar"));
+    toolbar2->setStyleSheet("background: transparent; border: none;");
     toolbar2->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolbar2->addAction(exportAction);
 }

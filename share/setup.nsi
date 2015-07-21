@@ -6,8 +6,8 @@ SetCompressor /SOLID lzma
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
 !define VERSION 0.3.0
-!define COMPANY "EuropeCoin project"
-!define URL http://www.europe-coin.com/
+!define COMPANY "EuropeCoinEUORG project"
+!define URL http://www.europecoin.eu.org/
 
 # MUI Symbol Definitions
 !define MUI_ICON "../share/pixmaps/europecoin.ico"
@@ -45,7 +45,7 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile europecoin-1.0.0-win32-setup.exe
+OutFile europecoin-1.0.1-win32-setup.exe
 InstallDir $PROGRAMFILES\EuropeCoin
 CRCCheck on
 XPStyle on

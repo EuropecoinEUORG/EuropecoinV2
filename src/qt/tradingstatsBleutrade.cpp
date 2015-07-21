@@ -43,31 +43,6 @@ TradingStatsBleutrade::TradingStatsBleutrade(QWidget* parent) : QWidget(parent),
 
     ui->setupUi(this);
 
-    /** Specific style for this page */
-    // Start styling
-    QStackedWidget *stack = ui->tabWidgetBleutrade->findChild<QStackedWidget *>();
-    stack->setStyleSheet("background: transparent; border: none;");
-    ui->tabWidgetBleutrade->setAttribute(Qt::WA_TranslucentBackground);
-    ui->tabWidgetBleutrade->setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->tabBleutrade->setAttribute(Qt::WA_TranslucentBackground);
-    ui->tabBleutrade->setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->qWidgetBleutradeMarketData->setAttribute(Qt::WA_TranslucentBackground);
-    ui->qWidgetBleutradeMarketData->setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->qTreeWidgetBleutradeBuy->setAttribute(Qt::WA_TranslucentBackground);
-    ui->qTreeWidgetBleutradeBuy->setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->All->setStyleSheet("#All QTabBar::tab {border:none;}"
-                           "QTabWidget::tab-bar {alignment:left;}"
-                           "QTabWidget::pane {border:none;}"
-                           );
-    ui->tabBleutrade->setStyleSheet("QTabBar::tab:!selected {background: transparent; margin-top: 2px; border-top-left-radius: 10px; border-top-right-radius: 10px;}"
-                                  "QTabBar::tab:selected, QTabBar::tab:hover {background: transparent; border: 1.5px solid white; border-bottom-color: transparent; }"
-                                  );
-    // End Styling
-
     ui->qCustomPlotBleutradeTrades->addGraph();
     ui->qCustomPlotBleutradeOrderDepth->addGraph();
     ui->qCustomPlotBleutradeOrderDepth->addGraph();

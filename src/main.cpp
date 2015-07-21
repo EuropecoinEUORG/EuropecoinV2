@@ -41,7 +41,9 @@ CBigNum bnProofOfWorkFirstBlock(~uint256(0) >> 30);
 
 unsigned int nTargetSpacing = 1 * 60; // 60 seconds
 unsigned int nRetarget = 1;
-unsigned int nStakeMinAge = 72 * 60 * 60; // 3 days
+
+// Development value (to get faster tests) = 30 mins
+unsigned int nStakeMinAge = 30 * 60; // Default/Production value = 72 * 60 * 60 (3 days)
 unsigned int nStakeMaxAge = -1;           //unlimited
 unsigned int nModifierInterval = 10 * 60; // time to elapse before new modifier is computed
 int nCoinbaseMaturity = 30;
@@ -997,14 +999,14 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
 {
 
     // Fork
-    // Development value of FORK_BLOCK: 5760
-    // Production value of FORK_BLOCK: 600600
+    // Development value of FORK_BLOCK: 5760 (faster tests)
+    // Production value of FORK_BLOCK: 601000 (expected)
     if(pindexBest->nHeight < FORK_BLOCK) { // Old code
 
         int64_t nRewardCoinYear;
 
         nRewardCoinYear = MAX_MINT_PROOF_OF_STAKE;
-
+            
         if(pindexBest->nHeight < 7 * DAILY_BLOCKCOUNT)
             nRewardCoinYear = 2.5 * MAX_MINT_PROOF_OF_STAKE;
         else if(pindexBest->nHeight < 14 * DAILY_BLOCKCOUNT)
@@ -1913,7 +1915,10 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
     // Sciakysystem: Variable Proof of Stake
 
     CBigNum bnCentSecond = 0;  // coin age in the unit of cent-seconds
-    CBigNum bnWeekInEpochFormat = 604800; // according to http://www.epochconverter.com/epoch/date-difference.php
+
+    // Development value: 172800 (hence, every 2 days the interest changes, faster tests)
+    // Production value: 604800 (1 week)
+    CBigNum bnWeekInEpochFormat = 172800;
     nCoinAge = 0;
 
     if (IsCoinBase())
@@ -1942,31 +1947,35 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
 
         bnWeeksCounter = nTime - txPrev.nTime;
 
+
+        // Development values: nStakeReward[11] = 100%, nStakeReward[0] = 10% - Every 2 days the PoS interest changes, tests are more clear if we apply 
+        // 100/10 %
+        // Production values: see main.cpp:#83
         if (pindexBest->nHeight <= LAST_POW_BLOCK)
-            nVariableStakeReward = nStakeReward[11]; // 100% reward until PoW's end
-        else if (bnWeeksCounter < (bnWeekInEpochFormat * 2)) //  First 2 weeks: 10%
+            nVariableStakeReward = nStakeReward[11]; // 100% until PoW end
+        else if (bnWeeksCounter < (bnWeekInEpochFormat * 2)) // First 2 days: 10%
             nVariableStakeReward = nStakeReward[0];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 2)) && (bnWeeksCounter < (bnWeekInEpochFormat * 3))) // 2 weeks: 15%
-            nVariableStakeReward = nStakeReward[1];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 3)) && (bnWeeksCounter < (bnWeekInEpochFormat * 4))) // 3 weeks: 20%
-            nVariableStakeReward = nStakeReward[2];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 4)) && (bnWeeksCounter < (bnWeekInEpochFormat * 5))) // 4 weeks: 30%
-            nVariableStakeReward = nStakeReward[3];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 5)) && (bnWeeksCounter < (bnWeekInEpochFormat * 6))) // 5 weeks: 35%
-            nVariableStakeReward = nStakeReward[4];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 6)) && (bnWeeksCounter < (bnWeekInEpochFormat * 7))) // 6 weeks: 40%
-            nVariableStakeReward = nStakeReward[5];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 7)) && (bnWeeksCounter < (bnWeekInEpochFormat * 8))) // 7 weeks: 45%
-            nVariableStakeReward = nStakeReward[6];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 8)) && (bnWeeksCounter < (bnWeekInEpochFormat * 9))) // 8 weeks: 55%
-            nVariableStakeReward = nStakeReward[7];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 9)) && (bnWeeksCounter < (bnWeekInEpochFormat * 10))) // 9 weeks: 60%
-            nVariableStakeReward = nStakeReward[8];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 10)) && (bnWeeksCounter < (bnWeekInEpochFormat * 11))) // 10 weeks: 70%
-            nVariableStakeReward = nStakeReward[9];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 11)) && (bnWeeksCounter < (bnWeekInEpochFormat * 12))) // 11 weeks: 80%
-            nVariableStakeReward = nStakeReward[10];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 12))) // 12 weeks or more: 100%
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 2)) && (bnWeeksCounter < (bnWeekInEpochFormat * 3))) // 4 - 6: 100%
+            nVariableStakeReward = nStakeReward[11];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 3)) && (bnWeeksCounter < (bnWeekInEpochFormat * 4))) // 6 - 8: 10%
+            nVariableStakeReward = nStakeReward[0];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 4)) && (bnWeeksCounter < (bnWeekInEpochFormat * 5))) // 8 - 10: 100%
+            nVariableStakeReward = nStakeReward[11];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 5)) && (bnWeeksCounter < (bnWeekInEpochFormat * 6))) // 10 - 12: 10%
+            nVariableStakeReward = nStakeReward[0];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 6)) && (bnWeeksCounter < (bnWeekInEpochFormat * 7))) // 12 - 14: 100%
+            nVariableStakeReward = nStakeReward[11];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 7)) && (bnWeeksCounter < (bnWeekInEpochFormat * 8))) // 14 - 16: 10%
+            nVariableStakeReward = nStakeReward[0];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 8)) && (bnWeeksCounter < (bnWeekInEpochFormat * 9))) // 16 - 18: 100%
+            nVariableStakeReward = nStakeReward[11];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 9)) && (bnWeeksCounter < (bnWeekInEpochFormat * 10))) // 18 - 20: 10%
+            nVariableStakeReward = nStakeReward[0];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 10)) && (bnWeeksCounter < (bnWeekInEpochFormat * 11))) // 20 - 22: 100%
+            nVariableStakeReward = nStakeReward[11];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 11)) && (bnWeeksCounter < (bnWeekInEpochFormat * 12))) // 22 - 24: 10%
+            nVariableStakeReward = nStakeReward[0];
+        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 12))) // 4 - 6: 100%
             nVariableStakeReward = nStakeReward[11];
 
         int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;

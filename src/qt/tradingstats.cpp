@@ -10,11 +10,13 @@ TradingstatsPage::TradingstatsPage(QWidget *parent) :
     BleutradeStats = new TradingStatsBleutrade();
 
     QString lblBittrexStats = "Bittrex";
-    QString lblBleutradeStats = "Bleutrade";
-
+    QString lblBleutradeStats = "Bleutrade";        
 
     ui->tabWidget->addTab(BittrexStats, lblBittrexStats);
     ui->tabWidget->addTab(BleutradeStats, lblBleutradeStats);
+
+    BittrexStats->pollAPIs();
+    BleutradeStats->pollAPIs();
 }
 
 void TradingstatsPage::setModel(ClientModel *model) {

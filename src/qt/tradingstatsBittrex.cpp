@@ -43,31 +43,6 @@ TradingStatsBittrex::TradingStatsBittrex(QWidget* parent) : QWidget(parent), ui(
 
     ui->setupUi(this);
 
-    /** Specific style for this page */
-    // Start styling
-    QStackedWidget *stack = ui->tabWidgetBittrex->findChild<QStackedWidget *>();
-    stack->setStyleSheet("background: transparent; border: none;");
-    ui->tabWidgetBittrex->setAttribute(Qt::WA_TranslucentBackground);
-    ui->tabWidgetBittrex->setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->tabBittrex->setAttribute(Qt::WA_TranslucentBackground);
-    ui->tabBittrex->setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->qWidgetBittrexMarketData->setAttribute(Qt::WA_TranslucentBackground);
-    ui->qWidgetBittrexMarketData->setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->qTreeWidgetBittrexBuy->setAttribute(Qt::WA_TranslucentBackground);
-    ui->qTreeWidgetBittrexBuy->setWindowFlags(Qt::FramelessWindowHint);
-
-    ui->All->setStyleSheet("#All QTabBar::tab {border:none;}"
-                           "QTabWidget::tab-bar {alignment:left;}"
-                           "QTabWidget::pane {border:none;}"
-                           );
-    ui->tabBittrex->setStyleSheet("QTabBar::tab:!selected {background: transparent; margin-top: 2px; border-top-left-radius: 10px; border-top-right-radius: 10px;}"
-                                  "QTabBar::tab:selected, QTabBar::tab:hover {background: transparent; border: 1.5px solid white; border-bottom-color: transparent; }"
-                                  );
-    // End Styling
-
     ui->qCustomPlotBittrexTrades->addGraph();
     ui->qCustomPlotBittrexOrderDepth->addGraph();
     ui->qCustomPlotBittrexOrderDepth->addGraph();

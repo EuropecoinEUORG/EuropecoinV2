@@ -45,10 +45,17 @@ public:
         bool confirmed = index.data(TransactionTableModel::ConfirmedRole).toBool();
         QVariant value = index.data(Qt::ForegroundRole);
         QColor foreground = option.palette.color(QPalette::Text);
+     #if QT_VERSION >= 0x050000
+        if(value.canConvert(QMetaType::QColor))
+        {
+            foreground = qvariant_cast<QColor>(value);
+        }
+#else        	
         if(qVariantCanConvert<QColor>(value))
         {
             foreground = qvariant_cast<QColor>(value);
         }
+#endif
 
         painter->setPen(foreground);
         painter->drawText(addressRect, Qt::AlignLeft|Qt::AlignVCenter, address);

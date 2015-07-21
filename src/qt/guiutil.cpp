@@ -11,6 +11,9 @@
 #include <QFont>
 #include <QLineEdit>
 #include <QUrl>
+#if QT_VERSION >= 0x050000
+#include <QUrlQuery>
+#endif
 #include <QTextDocument> // For Qt::escape
 #include <QAbstractItemView>
 #include <QApplication>
@@ -84,7 +87,12 @@ bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
     SendCoinsRecipient rv;
     rv.address = uri.path();
     rv.amount = 0;
+    #if QT_VERSION >= 0x050000    
+		QUrlQuery qu(uri);
+    QList<QPair<QString, QString> > items = qu.queryItems();
+#else
     QList<QPair<QString, QString> > items = uri.queryItems();
+#endif
     for (QList<QPair<QString, QString> >::iterator i = items.begin(); i != items.end(); i++)
     {
         bool fShouldReturnFalse = false;
@@ -137,7 +145,11 @@ bool parseBitcoinURI(QString uri, SendCoinsRecipient *out)
 
 QString HtmlEscape(const QString& str, bool fMultiLine)
 {
+  #if QT_VERSION >= 0x050000
+    QString escaped = str.toHtmlEscaped();
+#else
     QString escaped = Qt::escape(str);
+#endif
     if(fMultiLine)
     {
         escaped = escaped.replace("\n", "<br>\n");
@@ -172,7 +184,11 @@ QString getSaveFileName(QWidget *parent, const QString &caption,
     QString myDir;
     if(dir.isEmpty()) // Default to user documents location
     {
+     #if QT_VERSION >= 0x050000
+        myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#else
         myDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#endif
     }
     else
     {
@@ -452,6 +468,66 @@ void HelpMessageBox::showOrPrint()
         // On other operating systems, print help text to console
         printToConsole();
 #endif
+}
+
+void SetThemeQSS(QApplication& app)
+{
+    app.setStyleSheet("QTableView { color: black; alternate-background-color: rgb(0,102,204,150); background-color: rgb(0,102,204,150); gridline-color: black;}"
+
+                      "QWidget    {background-image: url(:/images/bg); background-position: center;}"
+
+                      "QFrame {background: transparent;}"
+
+                      "QPushButton {background: transparent; color: black; border: 1px solid black; border-radius: 10px; padding: 4px; border: 1px solid black; border-radius: 10px;}"
+                      "QPushButton::disabled {background: transparent; color: red; }"
+
+                      "QMenu {color: black;}"
+                      "QMenu::item::selected {background-color: rgb(216,216,216,91);}"
+
+                      "QMenuBar {color: black; background: transparent;}"
+                      "QMenuBar::item {color: black; font: bold; background: transparent;}"
+                      "QMenuBar::item::selected {color: black; font: bold; background-color: rgb(216,216,216,91);}"
+
+                      "QStatusBar {background: transparent;}"
+
+                      "QHeaderView::section {color: black; font: bold; font-size: 12pt; background-image: url(:/images/bg); background-position: center;}"
+
+                      "QTextEdit      { background: transparent; color: black; }"
+
+                      "QPlainTextEdit { background:transparent; color: black; }"
+
+                      "QSpinBox {background: transparent; color: black;}"
+
+                      "QTreeView::item:selected { background-color: rgb(216,216,216,91); }"
+
+                      "QRadioButton   { color: black; }"
+
+                      "QLabel {background: transparent; color: black; font: bold;}"
+
+                      "QLabel#label {font: bold;}"
+                      "QLabel#label_2 {font: bold;}"
+                      "QLabel#label_4 {font: bold;}"
+                      "QValidatedLineEdit { background: transparent; color: black;}"
+
+                      "QLineEdit {color: black; border: 1px solid black; border-radius: 10px; background: transparent;}"
+                      "QCheckBox {background: transparent; color: black;}"
+                      "QRadioButton {background: transparent;}"
+                      "QFrame#frame {background: transparent;}"
+
+                      "QTabWidget::pane {border-left: 1px solid black; border-right: 1px solid black; border-bottom: 1px solid black; border-radius: 10px; position: absolute; top: -0.5em;}"
+                      "QTabWidget::tab-bar { alignment: right;}"
+                      "QTabWidget::tab-bar#tabWidgetBittrex {alignment: left;}"
+                      "QTabBar {background: transparent;}"
+                      "QTabBar::tab {background: transparent; border: 1px solid #ffffff; color: black; min-width: 60px; padding: 4px; border-top-left-radius: 10px; border-top-right-radius: 10px;}"
+                      "QTabBar::tab:!selected {background: transparent; margin-top: 2px; border-top-left-radius: 10px; border-top-right-radius: 10px;}"
+                      "QTabBar::tab:selected, QTabBar::tab:hover {background: transparent; border: 1.5px solid black; border-bottom-color: transparent; }"
+
+                      "QTableWidget QHeaderView::section {height: 30px;}"
+
+                      "QComboBox { border: 1px solid black; border-radius: 3px; padding: 1px 1px 1px 1px; background: transparent; color: black;}"
+                      "QComboBox QListView {border: 0.5px solid black; background-image: url(:/images/bg); background-position: center; padding: 1px 1px 1px 1px;}"
+                      "QComboBox QAbstractItemView {border: 1.5px solid black; background-image: url(:/images/bg); background-position: center; }"
+                      );
 }
 
 } // namespace GUIUtil
