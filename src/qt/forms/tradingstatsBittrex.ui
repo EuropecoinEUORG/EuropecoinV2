@@ -103,7 +103,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <property name="iconSize">
           <size>
@@ -553,6 +553,9 @@ p, li { white-space: pre-wrap; }
              <property name="autoFillBackground">
               <bool>false</bool>
              </property>
+             <property name="styleSheet">
+              <string notr="true">background: transparent;</string>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <widget class="QScrollArea" name="scrollAreaBittrex">
@@ -583,7 +586,7 @@ p, li { white-space: pre-wrap; }
                    <x>0</x>
                    <y>0</y>
                    <width>1635</width>
-                   <height>28</height>
+                   <height>608</height>
                   </rect>
                  </property>
                  <property name="minimumSize">
@@ -593,7 +596,7 @@ p, li { white-space: pre-wrap; }
                   </size>
                  </property>
                  <property name="autoFillBackground">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <widget class="QLabel" name="lblBittrexTrades">
                   <property name="geometry">
@@ -778,6 +781,10 @@ p, li { white-space: pre-wrap; }
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: none;
+background: transparent;</string>
      </property>
      <widget class="QPushButton" name="btnUpdateMarketData">
       <property name="geometry">

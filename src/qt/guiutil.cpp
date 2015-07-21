@@ -472,11 +472,28 @@ void HelpMessageBox::showOrPrint()
 
 void SetThemeQSS(QApplication& app)
 {
-    app.setStyleSheet("QTableView { color: black; alternate-background-color: rgb(0,102,204,150); background-color: rgb(0,102,204,150); gridline-color: black;}"
+    app.setStyleSheet("QTableView { color: black; alternate-background-color: rgb(173,173,133,80); background-color: rgb(173,173,133,80); gridline-color: black;}"
 
                       "QWidget    {background-image: url(:/images/bg); background-position: center;}"
 
-                      "QFrame {background: transparent;}"
+                      "QWidget#widgetConversion {background: transparent;}"
+
+                      "QWidget#TradingStatsBittrex {background: transparent; border: none;}"
+                      "QWidget#TradingStatsBleutrade {background: transparent; border: none;}"
+
+                      "QWidget#tabBittrex {background: transparent; border: none;}"
+                      "QWidget#tabBleutrade {background: transparent; border: none;}"
+
+                      "QWidget#qWidgetBittrexMarketData {background: transparent;}"
+                      "QWidget#qWidgetBleutradeMarketData {background: transparent;}"
+
+                      "QTabWidget::pane {border: none; position: absolute; top: -0.5em;}"
+                      "QTabWidget::tab-bar { alignment: right;}"
+
+                      "QTabWidget::tab-bar#tabWidgetBittrex {alignment: center;}"
+                      "QTabWidget::tab-bar#tabWidgetBleutrade {alignment: center;}"
+
+                      "QFrame {background: transparent;}"                 
 
                       "QPushButton {background: transparent; color: black; border: 1px solid black; border-radius: 10px; padding: 4px; border: 1px solid black; border-radius: 10px;}"
                       "QPushButton::disabled {background: transparent; color: red; }"
@@ -504,7 +521,7 @@ void SetThemeQSS(QApplication& app)
 
                       "QLabel {background: transparent; color: black; font: bold;}"
 
-                      "QLabel#label {font: bold;}"
+                      "QLabel#label {font: bold;}"\
                       "QLabel#label_2 {font: bold;}"
                       "QLabel#label_4 {font: bold;}"
                       "QValidatedLineEdit { background: transparent; color: black;}"
@@ -514,11 +531,8 @@ void SetThemeQSS(QApplication& app)
                       "QRadioButton {background: transparent;}"
                       "QFrame#frame {background: transparent;}"
 
-                      "QTabWidget::pane {border-left: 1px solid black; border-right: 1px solid black; border-bottom: 1px solid black; border-radius: 10px; position: absolute; top: -0.5em;}"
-                      "QTabWidget::tab-bar { alignment: right;}"
-                      "QTabWidget::tab-bar#tabWidgetBittrex {alignment: left;}"
                       "QTabBar {background: transparent;}"
-                      "QTabBar::tab {background: transparent; border: 1px solid #ffffff; color: black; min-width: 60px; padding: 4px; border-top-left-radius: 10px; border-top-right-radius: 10px;}"
+                      "QTabBar::tab {background: transparent; border: 1px solid #000000; color: black; min-width: 60px; padding: 4px; border-top-left-radius: 10px; border-top-right-radius: 10px;}"
                       "QTabBar::tab:!selected {background: transparent; margin-top: 2px; border-top-left-radius: 10px; border-top-right-radius: 10px;}"
                       "QTabBar::tab:selected, QTabBar::tab:hover {background: transparent; border: 1.5px solid black; border-bottom-color: transparent; }"
 

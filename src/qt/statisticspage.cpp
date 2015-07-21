@@ -12,7 +12,6 @@ StatisticsPage::StatisticsPage(QWidget *parent) :
     QString coinStatsTabLabel = "Coin statistics";
     QString tradingStatsTabLabel = "Trading statistics";
 
-
     ui->tabWidget->addTab(coinStatsWidget, coinStatsTabLabel);
     ui->tabWidget->addTab(tradingStatsWidget, tradingStatsTabLabel);
 }
