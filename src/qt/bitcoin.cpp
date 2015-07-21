@@ -211,6 +211,9 @@ int main(int argc, char *argv[])
 
     try
     {
+        // Apply theme
+        GUIUtil::SetThemeQSS(app);
+
         // Regenerate startup link, to fix links to old versions
         if (GUIUtil::GetStartOnSystemStartup())
             GUIUtil::SetStartOnSystemStartup(true);

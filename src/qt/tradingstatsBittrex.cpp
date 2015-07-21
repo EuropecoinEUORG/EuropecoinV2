@@ -23,7 +23,7 @@ const QString apiCoinbasePrice = "https://api.coinbase.com/v1/currencies/exchang
 
 //Bittrex API
 const QString apiBittrexMarketSummary = "https://bittrex.com/api/v1.1/public/getmarketsummary?market=BTC-ERC";
-const QString apiBittrexTrades = "https://bittrex.com/api/v1.1/public/getmarkethistory?market=BTC-ERC&count=100";
+const QString apiBittrexTrades = "https://bittrex.com/api/v1.1/public/getmarkethistory?market=BTC-ERC&count=40";
 const QString apiBittrexOrders = "https://bittrex.com/api/v1.1/public/getorderbook?market=BTC-ERC&type=both&depth=50";
 
 //Common Globals
