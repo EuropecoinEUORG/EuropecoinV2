@@ -763,6 +763,8 @@ void BitcoinGUI::gotoStatisticsPage()
     statisticsAction->setChecked(true);
     centralWidget->setCurrentWidget(statisticsPage);
 
+    statisticsPage->tradingStatsWidget->UpdateMarketData();
+
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }

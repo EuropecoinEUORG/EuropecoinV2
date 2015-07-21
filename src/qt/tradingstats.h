@@ -45,6 +45,8 @@ public:
 
     void setModel(ClientModel *model);
 
+    void UpdateMarketData();
+
 private:
     TradingStatsBittrex *BittrexStats;
     TradingStatsBleutrade *BleutradeStats;

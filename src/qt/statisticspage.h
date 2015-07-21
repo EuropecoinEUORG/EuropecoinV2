@@ -46,11 +46,9 @@ public:
     void setModel(ClientModel *model);
 
     CoinStats *coinStatsWidget;
-
-private:
     TradingstatsPage *tradingStatsWidget;
-    //QAction *coinStatsAction;
-    //QAction *tradingStatsAction;
+
+private:    
     Ui::StatisticsPage *ui;
     ClientModel *model;
 
