@@ -12,9 +12,11 @@ TradingstatsPage::TradingstatsPage(QWidget *parent) :
     QString lblBittrexStats = "Bittrex";
     QString lblBleutradeStats = "Bleutrade";        
 
-    ui->tabWidget->addTab(BittrexStats, lblBittrexStats);
-    ui->tabWidget->addTab(BleutradeStats, lblBleutradeStats);
+    ui->TradingStatsTabWidget->addTab(BittrexStats, lblBittrexStats);
+    ui->TradingStatsTabWidget->addTab(BleutradeStats, lblBleutradeStats);   
+}
 
+void TradingstatsPage::UpdateMarketData() {
     BittrexStats->pollAPIs();
     BleutradeStats->pollAPIs();
 }
