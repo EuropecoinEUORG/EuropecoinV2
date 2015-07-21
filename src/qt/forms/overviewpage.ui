@@ -351,54 +351,65 @@
           </property>
          </widget>
         </item>
-
-
-           <item>
-            <widget class="QLabel" name="visitwebsite">
-             <property name="text">
-              <string>&lt;a href=&quot;http://europecoin.eu.org&quot;&gt;visit Europecoin&lt;/a&gt;</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="openExternalLinks">
-              <bool>true</bool>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="tradeonbittrex">
-             <property name="text">
-              <string>&lt;a href=&quot;https://bleutrade.com/exchange/ERC/BTC&quot;&gt;Trade on Bleutrade&lt;/a&gt;</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="openExternalLinks">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="btctalk">
-             <property name="text">
-              <string>&lt;a href=&quot;https://bitcointalk.org/index.php?topic=901605&quot;&gt;ERC on Bitcointalk&lt;/a&gt;</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="openExternalLinks">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+        <item>
+         <widget class="QLabel" name="visitwebsite">
+          <property name="text">
+           <string>&lt;a href=&quot;http://europecoin.eu.org&quot;&gt;Europecoin official WebSite&lt;/a&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="btctalk">
+          <property name="text">
+           <string>&lt;a href=&quot;https://bitcointalk.org/index.php?topic=901605&quot;&gt;Europecoin on Bitcointalk&lt;/a&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="tradeonbittrex">
+          <property name="text">
+           <string>&lt;a href=&quot;https://bleutrade.com/exchange/ERC/BTC&quot;&gt;Trade on Bleutrade&lt;/a&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>&lt;a href=&quot;https://bittrex.com/Market/Index?MarketName=BTC-ERC&quot;&gt;Trade on Bittrex&lt;/a&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
          </widget>
         </item>
        </layout>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
