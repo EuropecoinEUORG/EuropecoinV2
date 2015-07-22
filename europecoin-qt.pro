@@ -172,7 +172,9 @@ SOURCES += src/txdb-leveldb.cpp \
     src/qt/coinstats.cpp \
     src/qt/tradingstatsBittrex.cpp \
     src/qt/tradingstatsBleutrade.cpp \
-    src/qt/tradingstats.cpp
+    src/qt/tradingstats.cpp \
+    src/qt/tradingdialogBittrex.cpp \
+    src/qt/tradingdialog.cpp
 
 contains(USE_O3, 1) {
     message(Building O3 optimization flag)
@@ -295,7 +297,9 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/coinstats.h \
     src/qt/tradingstatsBittrex.h \
     src/qt/tradingstatsBleutrade.h \
-    src/qt/tradingstats.h
+    src/qt/tradingstats.h \
+    src/qt/tradingdialogBittrex.h \
+    src/qt/tradingdialog.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -385,7 +389,9 @@ FORMS += \
     src/qt/forms/coinstats.ui \
     src/qt/forms/tradingstatsBittrex.ui \
     src/qt/forms/tradingstatsBleutrade.ui \
-    src/qt/forms/tradingstats.ui
+    src/qt/forms/tradingstats.ui \    
+    src/qt/forms/tradingdialogBittrex.ui \
+    src/qt/forms/tradingdialog.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

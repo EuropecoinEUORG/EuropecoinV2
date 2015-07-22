@@ -27,6 +27,7 @@
 #include "rpcconsole.h"
 #include "wallet.h"
 #include "statisticspage.h"
+#include "tradingdialog.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -120,6 +121,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 
     statisticsPage = new StatisticsPage(this);
+    tradingPage = new TradingPage(this);
 
     centralWidget = new QStackedWidget(this);
     centralWidget->addWidget(overviewPage);
@@ -128,6 +130,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralWidget->addWidget(receiveCoinsPage);
     centralWidget->addWidget(sendCoinsPage);
     centralWidget->addWidget(statisticsPage);
+    centralWidget->addWidget(tradingPage);
     setCentralWidget(centralWidget);
 
     // Create status bar
@@ -251,6 +254,12 @@ void BitcoinGUI::createActions()
     statisticsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(statisticsAction);
 
+    tradingAction = new QAction(QIcon(":/icons/trading"), tr("Tra&de"), this);
+    tradingAction->setToolTip(tr("Trade europecoin directly from your wallet"));
+    tradingAction->setCheckable(true);
+    tradingAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
+    tabGroup->addAction(tradingAction);
+
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -262,6 +271,7 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(statisticsAction, SIGNAL(triggered()), this, SLOT(gotoStatisticsPage()));
+    connect(tradingAction, SIGNAL(triggered()), this, SLOT(gotoTradingPage()));
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -355,6 +365,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(historyAction);
     toolbar->addAction(addressBookAction);
     toolbar->addAction(statisticsAction);
+    toolbar->addAction(tradingAction);
 
     QToolBar *toolbar2 = addToolBar(tr("Actions toolbar"));
     toolbar2->setStyleSheet("background: transparent; border: none;");
@@ -764,6 +775,16 @@ void BitcoinGUI::gotoStatisticsPage()
     centralWidget->setCurrentWidget(statisticsPage);
 
     statisticsPage->tradingStatsWidget->UpdateMarketData();
+    statisticsPage->coinStatsWidget->updateStatistics();
+
+    exportAction->setEnabled(false);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+}
+
+void BitcoinGUI::gotoTradingPage()
+{
+    tradingAction->setChecked(true);
+    centralWidget->setCurrentWidget(tradingPage);
 
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
