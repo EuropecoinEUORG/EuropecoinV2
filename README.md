@@ -1,6 +1,6 @@
 Copyright (c) 2015 EuropeCoin Developers
 
-Mathias Klees (szenekonzept@googlemail.com)
+Matthias Klees (szenekonzept@googlemail.com)
 www.europecoin.eu.org
 
 Sciakysystem (sciakysystem@gmail.com - sciakysystem@outlook.com)
