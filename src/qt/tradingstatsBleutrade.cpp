@@ -101,7 +101,7 @@ void TradingStatsBleutrade::parseNetworkResponse(QNetworkReply* response)
     QUrl apiCall = response->url();
 
     if (response->error() != QNetworkReply::NoError) {
-        //Communication error has occurwhite
+        //Communication error has occurred
         emit networkError(response->error());
         return;
     }
@@ -320,9 +320,9 @@ void TradingStatsBleutrade::bleutradeMarketSummary(QNetworkReply* response)
  * Method: TradingStatsBleutrade::bleutradeTrades
  * Parameter(s): QNetworkReply* response
  *
- * Used to retrieve the latest trades that have occurwhite for a specific market
+ * Used to retrieve the latest trades that have occurred for a specific market
  * Parameter(s):
- * market (requiwhite): a string literal for the market (ex: BTC-LTC)
+ * market (requiblack): a string literal for the market (ex: BTC-LTC)
  * count (optional): a number between 1-100 for the number of entries to return (default = 20)
  *
  *     {
@@ -444,8 +444,8 @@ void TradingStatsBleutrade::bleutradeTrades(QNetworkReply* response)
  * Used to get retrieve the orderbook for a given market
  *
  * Parameters:
- * market	(requiwhite)	a string literal for the market (ex: BTC-LTC)
- * type	(requiwhite)	buy, sell or both to identify the type of orderbook to return.
+ * market	(requiblack)	a string literal for the market (ex: BTC-LTC)
+ * type	(requiblack)	buy, sell or both to identify the type of orderbook to return.
  * depth	(optional)	defaults to 20 - how deep of an order book to retrieve. Max is 100
  *
  * Response
@@ -618,10 +618,10 @@ void TradingStatsBleutrade::updateLabel(QLabel* qLabel, double d1, double d2, QS
     qLabel->setText("");
 
     if (d1 > d2) {
-        qLabel->setText(prefix + "<font color=\"white\"><b>" + QString::number(d1, 'f', decimalPlaces) + "</b></font>");
+        qLabel->setText(prefix + "<font color=\"black\"><b>" + QString::number(d1, 'f', decimalPlaces) + "</b></font>");
     }
     else if (d1 < d2) {
-        qLabel->setText(prefix + "<font color=\"white\"><b><u>" + QString::number(d1, 'f', decimalPlaces) + "</u></b></font>");
+        qLabel->setText(prefix + "<font color=\"black\"><b><u>" + QString::number(d1, 'f', decimalPlaces) + "</u></b></font>");
     }
     else {
         qLabel->setText(prefix + QString::number(d1, 'f', decimalPlaces));
@@ -632,10 +632,10 @@ void TradingStatsBleutrade::updateLabel(QLabel* qLabel, double d1, double d2, QS
     qLabel->setText("");
 
     if (d1 > d2) {
-        qLabel->setText(prefix + "<font color=\"white\"><b>" + QString::number(d1, 'f', decimalPlaces) + suffix + "</b></font>");
+        qLabel->setText(prefix + "<font color=\"black\"><b>" + QString::number(d1, 'f', decimalPlaces) + suffix + "</b></font>");
     }
     else if (d1 < d2) {
-        qLabel->setText(prefix + "<font color=\"white\"><b><u>" + QString::number(d1, 'f', decimalPlaces) + suffix + "</u></b></font>");
+        qLabel->setText(prefix + "<font color=\"black\"><b><u>" + QString::number(d1, 'f', decimalPlaces) + suffix + "</u></b></font>");
     }
     else {
         qLabel->setText(prefix + QString::number(d1, 'f', decimalPlaces) + suffix);

@@ -16,6 +16,7 @@ class Notificator;
 class RPCConsole;
 class StatisticsPage;
 class TradingPage;
+class StaisybitPage;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -69,6 +70,7 @@ private:
     SignVerifyMessageDialog *signVerifyMessageDialog;
     StatisticsPage *statisticsPage;
     TradingPage *tradingPage;
+    StaisybitPage *staisybitPage;
 
     QLabel *labelEncryptionIcon;
     QLabel *labelStakingIcon;
@@ -99,6 +101,7 @@ private:
     QAction *openRPCConsoleAction;
     QAction *statisticsAction;
     QAction *tradingAction;
+    QAction *staisybitAction;
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
@@ -155,6 +158,8 @@ private slots:
     void gotoStatisticsPage();
     /** Switch to trading page */
     void gotoTradingPage();
+    /** Switch to Staisybit page */
+    void gotoStaisybitPage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");

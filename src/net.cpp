@@ -345,7 +345,7 @@ bool GetMyExternalIP2(const CService& addrConnect, const char* pszGet, const cha
     return error("GetMyExternalIP() : connection closed");
 }
 
-// We now get our external IP from the IRC server first and only use this as a backup
+// We now get our external IP
 bool GetMyExternalIP(CNetAddr& ipRet)
 {
     CService addrConnect;
@@ -1138,10 +1138,8 @@ void MapPort()
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
 static const char *strDNSSeed[][2] = {
-    //{"62.75.242.98", "62.75.242.98"},
-    //{"194.135.92.209","194.135.92.209"} // bitnodes.net
-    {"198.50.149.0","198.50.149.0"},
-    {"178.31.161.118","178.31.161.118"}
+    {"seed1", "erc1.bitnodes.net"},
+    {"seed2", "94.245.53.24"},
 };
 
 void ThreadDNSAddressSeed(void* parg)
@@ -1357,7 +1355,7 @@ void ThreadOpenConnections2(void* parg)
         if (fShutdown)
             return;
 
-        // Add seed nodes if IRC isn't working
+        // Add seed nodes
         if (addrman.size()==0 && (GetTime() - nStart > 60) && !fTestNet)
         {
             std::vector<CAddress> vAdd;

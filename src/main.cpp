@@ -41,9 +41,7 @@ CBigNum bnProofOfWorkFirstBlock(~uint256(0) >> 30);
 
 unsigned int nTargetSpacing = 1 * 60; // 60 seconds
 unsigned int nRetarget = 1;
-
-// Development value (to get faster tests) = 30 mins
-unsigned int nStakeMinAge = 30 * 60; // Default/Production value = 72 * 60 * 60 (3 days)
+unsigned int nStakeMinAge = 72 * 60 * 60; // 3 days
 unsigned int nStakeMaxAge = -1;           //unlimited
 unsigned int nModifierInterval = 10 * 60; // time to elapse before new modifier is computed
 int nCoinbaseMaturity = 30;
@@ -78,9 +76,10 @@ int64_t nMinimumInputValue = 0;
 
 extern enum Checkpoints::CPMode CheckpointsMode;
 
-// Sciakysystem: variable proof of stake
-static const int nStakeSteps = 12;
-float nStakeReward[nStakeSteps] = {(0.10), (0.15), (0.20), (0.30), (0.35), (0.40), (0.45), (0.55), (0.60), (0.70), (0.80), (1)};
+// Variable proof of stake interest based on coin age
+static const int nStakeSteps = 8;
+static const float aStakeReward[nStakeSteps] = {(0.005), (0.01), (0.01), (0.015), (0.015), (0.03), (0.03), (0.05)};
+
 //////////////////////////////////////////////////////////////////////////////
 //
 // dispatching functions
@@ -991,53 +990,25 @@ int64_t GetProofOfWorkReward(int64_t nFees)
     return nSubsidy + nFees;
 }
 
-// No need of this after the fork
 const int DAILY_BLOCKCOUNT =  1440;
 
 // miner's coin stake reward based on coin age spent (coin-days)
 int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
 {
+    int64_t nSubsidy = 0;
 
-    // Fork
-    // Development value of FORK_BLOCK: 5760 (faster tests)
-    // Production value of FORK_BLOCK: 601000 (expected)
-    if(pindexBest->nHeight < FORK_BLOCK) { // Old code
-
-        int64_t nRewardCoinYear;
-
-        nRewardCoinYear = MAX_MINT_PROOF_OF_STAKE;
-            
-        if(pindexBest->nHeight < 7 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear = 2.5 * MAX_MINT_PROOF_OF_STAKE;
-        else if(pindexBest->nHeight < 14 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear = 10 * MAX_MINT_PROOF_OF_STAKE;
-        else if(pindexBest->nHeight < 21 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear = 15 * MAX_MINT_PROOF_OF_STAKE;
-        else
-            nRewardCoinYear = 5 * MAX_MINT_PROOF_OF_STAKE;
-
-        int64_t nSubsidy = 0;
-
-        if(pindexBest->nHeight > 21 * DAILY_BLOCKCOUNT)
-            nSubsidy = nCoinAge  / COIN * nRewardCoinYear / 365;
-        else
-            nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
-
-        if (fDebug && GetBoolArg("-printcreation"))
-            printf("GetProofOfWorkReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
-
-        return nSubsidy + nFees;
-    } else { // new code
-
-        // CTransaction::GetCoinAge is the function where actually the (annual) reward is calculated. Here we just
-        // transform it in a daily reward.
-        int64_t nSubsidy = nCoinAge / 365;
-
-        if (fDebug && GetBoolArg("-printcreation"))
-            printf("GetProofOfWorkReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
-
-        return nSubsidy + nFees;
+    if(pindexBest->nHeight <= FORK_BLOCK) {
+        int64_t nRewardCoinYear = MAX_MINT_PROOF_OF_STAKE;
+        nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
+    } else {
+        // VPoS math is in CTransaction::GetCoinAge
+        nSubsidy = nCoinAge / 365;
     }
+
+    if (fDebug && GetBoolArg("-printcreation"))
+        printf("GetProofOfWorkReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
+
+    return nSubsidy + nFees;
 }
 
 static const int64_t nTargetTimespan = 16 * 60;  // 16 mins
@@ -1912,13 +1883,7 @@ bool CBlock::SetBestChain(CTxDB& txdb, CBlockIndex* pindexNew)
 // age (trust score) of competing branches.
 bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
 {
-    // Sciakysystem: Variable Proof of Stake
-
     CBigNum bnCentSecond = 0;  // coin age in the unit of cent-seconds
-
-    // Development value: 172800 (hence, every 2 days the interest changes, faster tests)
-    // Production value: 604800 (1 week)
-    CBigNum bnWeekInEpochFormat = 172800;
     nCoinAge = 0;
 
     if (IsCoinBase())
@@ -1926,8 +1891,7 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
 
     BOOST_FOREACH(const CTxIn& txin, vin)
     {
-        // For VPoS ...
-        CBigNum bnWeeksCounter = 0; // in seconds
+        int bnWeeksCounter = 0; // in seconds
         int64_t nVariableStakeReward = 0; // reward % container
 
         // First try finding the previous transaction in database
@@ -1945,49 +1909,42 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
         if (block.GetBlockTime() + nStakeMinAge > nTime)
             continue; // only count coins meeting min age requirement
 
-        bnWeeksCounter = nTime - txPrev.nTime;
+        // Pre-fork coin age math
+        if (pindexBest->nHeight <= FORK_BLOCK) {
 
+            int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
+            bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT;
 
-        // Development values: nStakeReward[11] = 100%, nStakeReward[0] = 10% - Every 2 days the PoS interest changes, tests are more clear if we apply 
-        // 100/10 %
-        // Production values: see main.cpp:#83
-        if (pindexBest->nHeight <= LAST_POW_BLOCK)
-            nVariableStakeReward = nStakeReward[11]; // 100% until PoW end
-        else if (bnWeeksCounter < (bnWeekInEpochFormat * 2)) // First 2 days: 10%
-            nVariableStakeReward = nStakeReward[0];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 2)) && (bnWeeksCounter < (bnWeekInEpochFormat * 3))) // 4 - 6: 100%
-            nVariableStakeReward = nStakeReward[11];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 3)) && (bnWeeksCounter < (bnWeekInEpochFormat * 4))) // 6 - 8: 10%
-            nVariableStakeReward = nStakeReward[0];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 4)) && (bnWeeksCounter < (bnWeekInEpochFormat * 5))) // 8 - 10: 100%
-            nVariableStakeReward = nStakeReward[11];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 5)) && (bnWeeksCounter < (bnWeekInEpochFormat * 6))) // 10 - 12: 10%
-            nVariableStakeReward = nStakeReward[0];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 6)) && (bnWeeksCounter < (bnWeekInEpochFormat * 7))) // 12 - 14: 100%
-            nVariableStakeReward = nStakeReward[11];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 7)) && (bnWeeksCounter < (bnWeekInEpochFormat * 8))) // 14 - 16: 10%
-            nVariableStakeReward = nStakeReward[0];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 8)) && (bnWeeksCounter < (bnWeekInEpochFormat * 9))) // 16 - 18: 100%
-            nVariableStakeReward = nStakeReward[11];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 9)) && (bnWeeksCounter < (bnWeekInEpochFormat * 10))) // 18 - 20: 10%
-            nVariableStakeReward = nStakeReward[0];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 10)) && (bnWeeksCounter < (bnWeekInEpochFormat * 11))) // 20 - 22: 100%
-            nVariableStakeReward = nStakeReward[11];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 11)) && (bnWeeksCounter < (bnWeekInEpochFormat * 12))) // 22 - 24: 10%
-            nVariableStakeReward = nStakeReward[0];
-        else if ((bnWeeksCounter >= (bnWeekInEpochFormat * 12))) // 4 - 6: 100%
-            nVariableStakeReward = nStakeReward[11];
+            if (fDebug && GetBoolArg("-printcoinage"))
+                printf("coin age nValueIn=%"PRId64" nTimeDiff=%d bnCentSecond=%s\n", nValueIn, nTime - txPrev.nTime, bnCentSecond.ToString().c_str());
 
-        int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
+            printf("Europecoin: applied pre-fork coin age calcs");
 
-        // We now need to include in the coinAge math the PoS interest too. So CTransaction::GetCoinAge becomes
-        // the function where actually the stake reward is calculated. In future, we'll delete GetProofOfStakeReward
-        // function and we'll adapt main.cpp to check blockchain's reward against CTransaction::GetCoinAge instead of, indeed,
-        // GetProofOfStakeReward.
-        bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT * nVariableStakeReward;
+        } else {
 
-        if (fDebug && GetBoolArg("-printcoinage"))
-            printf("coin age nValueIn=%"PRId64" nTimeDiff=%d bnCentSecond=%s\n", nValueIn, nTime - txPrev.nTime, bnCentSecond.ToString().c_str());
+            if(pindexBest->nHeight <= LAST_BLOCK_BONUS_RATE) {
+                nVariableStakeReward = 0.1 * COIN; // bonus rate for ~3 weeks after fork
+            } else { // VPoS
+
+                // Counts how old this tx is (in weeks)
+                bnWeeksCounter = (int)((nTime - txPrev.nTime) / 604800);
+                bnWeeksCounter = max(1, bnWeeksCounter);
+
+                if(bnWeeksCounter < nStakeSteps) {
+                    // min 0.5%, max 5%
+                    nVariableStakeReward = aStakeReward[bnWeeksCounter-1] * COIN;
+                } else { // fixed to 5% after 7 weeks
+                    nVariableStakeReward = aStakeReward[nStakeSteps-1] * COIN;
+                }
+            }
+
+            int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
+            // include stake reward into nCoinAge math. We'll then need to change GetProofOfStakeReward() task
+            bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT * nVariableStakeReward / COIN;
+
+            if (fDebug && GetBoolArg("-printcoinage"))
+                printf("coin age nValueIn=%"PRId64" nTimeDiff=%d bnCentSecond=%s\n", nValueIn, nTime - txPrev.nTime, bnCentSecond.ToString().c_str());
+        }
     }
 
     CBigNum bnCoinDay = bnCentSecond * CENT / (24 * 60 * 60);
@@ -2584,7 +2541,7 @@ bool LoadBlockIndex(bool fAllowNew)
 
         const char* pszTimestamp = "The European Union";
         CTransaction txNew;
-        txNew.nTime = 1437465468;
+        txNew.nTime = 1399665533;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 0 << CBigNum(42) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
@@ -2594,12 +2551,12 @@ bool LoadBlockIndex(bool fAllowNew)
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1437465468;
+        block.nTime    = 1399665533;
         block.nBits    = bnProofOfWorkLimit.GetCompact();
-        block.nNonce   = 449243;
+        block.nNonce   = 816658;
         if(fTestNet)
         {
-            block.nNonce   = 449243;
+            block.nNonce   = 816658;
         }
         if (true  && (block.GetHash() != hashGenesisBlock)) {
 
@@ -2623,7 +2580,7 @@ bool LoadBlockIndex(bool fAllowNew)
         printf("block.nNonce = %u \n", block.nNonce);
 
         //// debug print
-        assert(block.hashMerkleRoot == uint256("81bf3be499ef3d7cb3deaf2d906d7cd590ccda08fefd5a631794e30f2de360c8"));
+        assert(block.hashMerkleRoot == uint256("680166a8f7e81568bf6ebda4e0bb43d65a3e21608d11ed8363c7d60133ef4cb6"));
         block.print();
         assert(block.GetHash() == (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
         assert(block.CheckBlock());

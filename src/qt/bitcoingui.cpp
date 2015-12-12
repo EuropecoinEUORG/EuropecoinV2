@@ -28,6 +28,7 @@
 #include "wallet.h"
 #include "statisticspage.h"
 #include "tradingdialog.h"
+#include "staisybit.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -122,6 +123,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     statisticsPage = new StatisticsPage(this);
     tradingPage = new TradingPage(this);
+    staisybitPage = new StaisybitPage(this);
 
     centralWidget = new QStackedWidget(this);
     centralWidget->addWidget(overviewPage);
@@ -131,6 +133,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralWidget->addWidget(sendCoinsPage);
     centralWidget->addWidget(statisticsPage);
     centralWidget->addWidget(tradingPage);
+    centralWidget->addWidget(staisybitPage);
     setCentralWidget(centralWidget);
 
     // Create status bar
@@ -260,6 +263,12 @@ void BitcoinGUI::createActions()
     tradingAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
     tabGroup->addAction(tradingAction);
 
+    staisybitAction = new QAction(QIcon(":/icons/staisybit"), tr("Cloud Staking"), this);
+    staisybitAction->setToolTip(tr("Europecoin online staking wallet"));
+    staisybitAction->setCheckable(true);
+    staisybitAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
+    tabGroup->addAction(staisybitAction);
+
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(sendCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -272,6 +281,7 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(statisticsAction, SIGNAL(triggered()), this, SLOT(gotoStatisticsPage()));
     connect(tradingAction, SIGNAL(triggered()), this, SLOT(gotoTradingPage()));
+    connect(staisybitAction, SIGNAL(triggered()), this, SLOT(gotoStaisybitPage()));
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -366,6 +376,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(addressBookAction);
     toolbar->addAction(statisticsAction);
     toolbar->addAction(tradingAction);
+    toolbar->addAction(staisybitAction);
 
     QToolBar *toolbar2 = addToolBar(tr("Actions toolbar"));
     toolbar2->setStyleSheet("background: transparent; border: none;");
@@ -785,6 +796,15 @@ void BitcoinGUI::gotoTradingPage()
 {
     tradingAction->setChecked(true);
     centralWidget->setCurrentWidget(tradingPage);
+
+    exportAction->setEnabled(false);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+}
+
+void BitcoinGUI::gotoStaisybitPage()
+{
+    staisybitAction->setChecked(true);
+    centralWidget->setCurrentWidget(staisybitPage);
 
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);

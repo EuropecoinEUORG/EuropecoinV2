@@ -3,39 +3,12 @@ TARGET = Europecoin
 macx:TARGET = "Europecoin"
 VERSION = 2.0.0
 INCLUDEPATH += src src/json src/qt
-QT += core gui network
+QT += core gui network webkitwidgets webkit
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE QT_DISABLE_DEPRECATED_BEFORE=0
 CONFIG += no_include_pwd
 CONFIG += thread
 QMAKE_CXXFLAGS = -fpermissive -Wunused-variable
-
-# for boost 1.55, add -mt to the boost libraries
-# use: qmake BOOST_LIB_SUFFIX=-mt
-# for boost thread win32 with _win32 sufix
-# use: BOOST_THREAD_LIB_SUFFIX=_win32-...
-# or when linking against a specific BerkelyDB version: BDB_LIB_SUFFIX=-4.8
-
-# Dependency library locations can be customized with:
-#    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
-#    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
-
-# Sciakysystem: added win32 conditional
-win32 {
-    BOOST_LIB_SUFFIX=-mgw49-mt-s-1_57
-    BOOST_INCLUDE_PATH=C:/deps/boost_1_57_0
-    BOOST_LIB_PATH=C:/deps/boost_1_57_0/stage/lib
-    BDB_INCLUDE_PATH=C:/deps/db-4.8.30.NC/build_unix
-    BDB_LIB_PATH=C:/deps/db-4.8.30.NC/build_unix
-    OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.1j/include
-    OPENSSL_LIB_PATH=C:/deps/openssl-1.0.1j
-    MINIUPNPC_INCLUDE_PATH=C:/deps
-    MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
-    LIBPNG_INCLUDE_PATH=C:/deps/libpng-1.6.14
-    LIBPNG_LIB_PATH=C:/deps/libpng-1.6.14/.libs
-    QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
-    QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
-}
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -49,7 +22,7 @@ contains(RELEASE, 1) {
 
     !win32:!macx {
         # Linux: static link
-	LIBS += -Wl,-Bstatic -Wl,-z,relro -Wl,-z,now
+        LIBS += -Wl,-Bstatic -Wl,-z,relro -Wl,-z,now
     }
 }
 
@@ -133,7 +106,7 @@ LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
         QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
     }
     LIBS += -lshlwapi
-    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
+    #genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
 }
 genleveldb.target = $$PWD/src/leveldb/libleveldb.a
 genleveldb.depends = FORCE
@@ -166,15 +139,7 @@ SOURCES += src/txdb-leveldb.cpp \
     src/luffa.c \
     src/shavite.c \
     src/simd.c \
-    src/skein.c \
-    src/qt/qcustomplot.cpp \
-    src/qt/statisticspage.cpp \
-    src/qt/coinstats.cpp \
-    src/qt/tradingstatsBittrex.cpp \
-    src/qt/tradingstatsBleutrade.cpp \
-    src/qt/tradingstats.cpp \
-    src/qt/tradingdialogBittrex.cpp \
-    src/qt/tradingdialog.cpp
+    src/skein.c
 
 contains(USE_O3, 1) {
     message(Building O3 optimization flag)
@@ -196,17 +161,19 @@ QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qu
 # Input
 DEPENDPATH += src src/json src/qt
 HEADERS += src/qt/bitcoingui.h \
-    src/qt/transactiontablemodel.h \
-    src/qt/addresstablemodel.h \
-    src/qt/optionsdialog.h \
-    src/qt/coincontroldialog.h \
-    src/qt/coincontroltreewidget.h \
-    src/qt/sendcoinsdialog.h \
-    src/qt/addressbookpage.h \
-    src/qt/signverifymessagedialog.h \
-    src/qt/aboutdialog.h \
-    src/qt/editaddressdialog.h \
-    src/qt/bitcoinaddressvalidator.h \
+    src/sph_blake.h \
+    src/sph_bmw.h \
+    src/sph_cubehash.h \
+    src/sph_echo.h \
+    src/sph_groestl.h \
+    src/sph_jh.h \
+    src/sph_keccak.h \
+    src/sph_luffa.h \
+    src/sph_shavite.h \
+    src/sph_simd.h \
+    src/sph_skein.h \
+    src/sph_types.h \
+    src/threadsafety.h \
     src/alert.h \
     src/addrman.h \
     src/base58.h \
@@ -232,6 +199,22 @@ HEADERS += src/qt/bitcoingui.h \
     src/script.h \
     src/init.h \
     src/mruset.h \
+    src/wallet.h \
+    src/keystore.h \
+    src/bitcoinrpc.h \
+    src/crypter.h \
+    src/protocol.h \
+    src/allocators.h \
+    src/ui_interface.h \
+    src/version.h \
+    src/netbase.h \
+    src/clientversion.h \
+    src/bloom.h \
+    src/checkqueue.h \
+    src/hash.h \
+    src/hashblock.h \
+    src/limitedmap.h \
+    src/txdb-leveldb.h \
     src/json/json_spirit_writer_template.h \
     src/json/json_spirit_writer.h \
     src/json/json_spirit_value.h \
@@ -241,6 +224,17 @@ HEADERS += src/qt/bitcoingui.h \
     src/json/json_spirit_reader.h \
     src/json/json_spirit_error_position.h \
     src/json/json_spirit.h \
+    src/qt/transactiontablemodel.h \
+    src/qt/addresstablemodel.h \
+    src/qt/optionsdialog.h \
+    src/qt/coincontroldialog.h \
+    src/qt/coincontroltreewidget.h \
+    src/qt/sendcoinsdialog.h \
+    src/qt/addressbookpage.h \
+    src/qt/signverifymessagedialog.h \
+    src/qt/aboutdialog.h \
+    src/qt/editaddressdialog.h \
+    src/qt/bitcoinaddressvalidator.h \
     src/qt/clientmodel.h \
     src/qt/guiutil.h \
     src/qt/transactionrecord.h \
@@ -250,48 +244,19 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/transactiondesc.h \
     src/qt/transactiondescdialog.h \
     src/qt/bitcoinamountfield.h \
-    src/wallet.h \
-    src/keystore.h \
     src/qt/transactionfilterproxy.h \
     src/qt/transactionview.h \
     src/qt/walletmodel.h \
-    src/bitcoinrpc.h \
     src/qt/overviewpage.h \
     src/qt/csvmodelwriter.h \
-    src/crypter.h \
     src/qt/sendcoinsentry.h \
     src/qt/qvalidatedlineedit.h \
     src/qt/bitcoinunits.h \
     src/qt/qvaluecombobox.h \
     src/qt/askpassphrasedialog.h \
-    src/protocol.h \
     src/qt/notificator.h \
     src/qt/qtipcserver.h \
-    src/allocators.h \
-    src/ui_interface.h \
     src/qt/rpcconsole.h \
-    src/version.h \
-    src/netbase.h \
-    src/clientversion.h \
-    src/bloom.h \
-    src/checkqueue.h \
-    src/hash.h \
-    src/hashblock.h \
-    src/limitedmap.h \
-    src/sph_blake.h \
-    src/sph_bmw.h \
-    src/sph_cubehash.h \
-    src/sph_echo.h \
-    src/sph_groestl.h \
-    src/sph_jh.h \
-    src/sph_keccak.h \
-    src/sph_luffa.h \
-    src/sph_shavite.h \
-    src/sph_simd.h \
-    src/sph_skein.h \
-    src/sph_types.h \
-    src/threadsafety.h \
-    src/txdb-leveldb.h \
     src/qt/qcustomplot.h \
     src/qt/statisticspage.h \
     src/qt/coinstats.h \
@@ -299,20 +264,10 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/tradingstatsBleutrade.h \
     src/qt/tradingstats.h \
     src/qt/tradingdialogBittrex.h \
-    src/qt/tradingdialog.h
+    src/qt/tradingdialog.h \
+    src/qt/staisybit.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
-    src/qt/transactiontablemodel.cpp \
-    src/qt/addresstablemodel.cpp \
-    src/qt/optionsdialog.cpp \
-    src/qt/sendcoinsdialog.cpp \
-    src/qt/coincontroldialog.cpp \
-    src/qt/coincontroltreewidget.cpp \
-    src/qt/addressbookpage.cpp \
-    src/qt/signverifymessagedialog.cpp \
-    src/qt/aboutdialog.cpp \
-    src/qt/editaddressdialog.cpp \
-    src/qt/bitcoinaddressvalidator.cpp \
     src/alert.cpp \
     src/version.cpp \
     src/sync.cpp \
@@ -328,6 +283,45 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/addrman.cpp \
     src/db.cpp \
     src/walletdb.cpp \
+    src/noui.cpp \
+    src/kernel.cpp \
+    src/scrypt-arm.S \
+    src/scrypt-x86.S \
+    src/scrypt-x86_64.S \
+    src/scrypt.cpp \
+    src/pbkdf2.cpp \
+    src/wallet.cpp \
+    src/keystore.cpp \
+    src/protocol.cpp \
+    src/bitcoinrpc.cpp \
+    src/rpcdump.cpp \
+    src/rpcnet.cpp \
+    src/rpcmining.cpp \
+    src/rpcwallet.cpp \
+    src/rpcblockchain.cpp \
+    src/rpcrawtransaction.cpp \
+    src/crypter.cpp \
+    src/qt/transactiontablemodel.cpp \
+    src/qt/addresstablemodel.cpp \
+    src/qt/optionsdialog.cpp \
+    src/qt/sendcoinsdialog.cpp \
+    src/qt/coincontroldialog.cpp \
+    src/qt/coincontroltreewidget.cpp \
+    src/qt/addressbookpage.cpp \
+    src/qt/signverifymessagedialog.cpp \
+    src/qt/aboutdialog.cpp \
+    src/qt/editaddressdialog.cpp \
+    src/qt/bitcoinaddressvalidator.cpp \
+    src/qt/transactionfilterproxy.cpp \
+    src/qt/transactionview.cpp \
+    src/qt/walletmodel.cpp \
+    src/qt/overviewpage.cpp \
+    src/qt/csvmodelwriter.cpp \
+    src/qt/sendcoinsentry.cpp \
+    src/qt/qvalidatedlineedit.cpp \
+    src/qt/bitcoinunits.cpp \
+    src/qt/qvaluecombobox.cpp \
+    src/qt/askpassphrasedialog.cpp \
     src/qt/clientmodel.cpp \
     src/qt/guiutil.cpp \
     src/qt/transactionrecord.cpp \
@@ -337,37 +331,18 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiondescdialog.cpp \
     src/qt/bitcoinstrings.cpp \
     src/qt/bitcoinamountfield.cpp \
-    src/wallet.cpp \
-    src/keystore.cpp \
-    src/qt/transactionfilterproxy.cpp \
-    src/qt/transactionview.cpp \
-    src/qt/walletmodel.cpp \
-    src/bitcoinrpc.cpp \
-    src/rpcdump.cpp \
-    src/rpcnet.cpp \
-    src/rpcmining.cpp \
-    src/rpcwallet.cpp \
-    src/rpcblockchain.cpp \
-    src/rpcrawtransaction.cpp \
-    src/qt/overviewpage.cpp \
-    src/qt/csvmodelwriter.cpp \
-    src/crypter.cpp \
-    src/qt/sendcoinsentry.cpp \
-    src/qt/qvalidatedlineedit.cpp \
-    src/qt/bitcoinunits.cpp \
-    src/qt/qvaluecombobox.cpp \
-    src/qt/askpassphrasedialog.cpp \
-    src/protocol.cpp \
     src/qt/notificator.cpp \
     src/qt/qtipcserver.cpp \
     src/qt/rpcconsole.cpp \
-    src/noui.cpp \
-    src/kernel.cpp \
-    src/scrypt-arm.S \
-    src/scrypt-x86.S \
-    src/scrypt-x86_64.S \
-    src/scrypt.cpp \
-    src/pbkdf2.cpp \
+    src/qt/qcustomplot.cpp \
+    src/qt/statisticspage.cpp \
+    src/qt/coinstats.cpp \
+    src/qt/tradingstatsBittrex.cpp \
+    src/qt/tradingstatsBleutrade.cpp \
+    src/qt/tradingstats.cpp \
+    src/qt/tradingdialogBittrex.cpp \
+    src/qt/tradingdialog.cpp \
+    src/qt/staisybit.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -389,9 +364,10 @@ FORMS += \
     src/qt/forms/coinstats.ui \
     src/qt/forms/tradingstatsBittrex.ui \
     src/qt/forms/tradingstatsBleutrade.ui \
-    src/qt/forms/tradingstats.ui \    
+    src/qt/forms/tradingstats.ui \
     src/qt/forms/tradingdialogBittrex.ui \
-    src/qt/forms/tradingdialog.ui
+    src/qt/forms/tradingdialog.ui \
+    src/qt/forms/staisybit.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

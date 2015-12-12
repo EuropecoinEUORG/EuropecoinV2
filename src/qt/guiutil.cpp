@@ -495,8 +495,8 @@ void SetThemeQSS(QApplication& app)
 
                       "QFrame {background: transparent;}"                 
 
-                      "QPushButton {background: transparent; color: black; border: 1px solid black; border-radius: 10px; padding: 4px; border: 1px solid black; border-radius: 10px;}"
-                      "QPushButton::disabled {background: transparent; color: red; }"
+                      "QPushButton {background: transparent; color: black; border: 1px solid black; border-radius: 10px; padding: 4px;}"
+                      "QPushButton::disabled {background: transparent; color: red; }"                                            
 
                       "QMenu {color: black;}"
                       "QMenu::item::selected {background-color: rgb(216,216,216,91);}"

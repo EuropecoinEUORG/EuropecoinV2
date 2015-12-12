@@ -26,9 +26,9 @@ class CInv;
 class CRequestTracker;
 class CNode;
 
-// Development values
-static const int LAST_POW_BLOCK = 2880; // Production value: 20160 (passed)
-static const int FORK_BLOCK = 5760; // 601000 (expected)
+static const int LAST_POW_BLOCK = 20160;
+static const int FORK_BLOCK = 820000;
+static const int LAST_BLOCK_BONUS_RATE = 850240; // ~3 weeks after fork
 
 static const unsigned int MAX_BLOCK_SIZE = 1000000;
 static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
@@ -38,8 +38,7 @@ static const unsigned int MAX_INV_SZ = 50000;
 static const int64_t MIN_TX_FEE = 10000;
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 static const int64_t MAX_MONEY = 384000000 * COIN;
-static const int64_t COIN_YEAR_REWARD = 5 * CENT;
-static const int64_t MAX_MINT_PROOF_OF_STAKE = 1 * CENT;
+static const int64_t MAX_MINT_PROOF_OF_STAKE = 0.05 * COIN;	// before fork: 5% annual interest
 
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 // Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp.
@@ -51,12 +50,12 @@ static const int fHaveUPnP = true;
 static const int fHaveUPnP = false;
 #endif
 
-// Development values
-static const uint256 hashGenesisBlock("000005f13b4ed55e24ae24e9645fbdd640fda7ad5862187b3dfec3c22b31244b");
-static const uint256 hashGenesisBlockTestNet("000005f13b4ed55e24ae24e9645fbdd640fda7ad5862187b3dfec3c22b31244b");
+static const uint256 hashGenesisBlock("00000af3c43629a34b3027784dd9f073899bf70dcb3bd4db9cdbf9e9185aeadf");
+static const uint256 hashGenesisBlockTestNet("00000af3c43629a34b3027784dd9f073899bf70dcb3bd4db9cdbf9e9185aeadf");
 
-inline int64_t PastDrift(int64_t nTime)   { return nTime - 24 * 60 * 60; } // up to 1 day from the past
-inline int64_t FutureDrift(int64_t nTime) { return nTime + 24 * 60 * 60; } // up to 1 day from the future
+// updated due to security risk from 1 day to 14 minutes
+inline int64_t PastDrift(int64_t nTime)   { return nTime - 14 * 60; } // up to 14 minutes from the past
+inline int64_t FutureDrift(int64_t nTime) { return nTime + 14 * 60; } // up to 14 minutes from the future
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;

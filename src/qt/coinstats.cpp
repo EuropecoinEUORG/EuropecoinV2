@@ -45,6 +45,7 @@ void CoinStats::updateStatistics() {
     int pPawrate = GetPoWMHashPS();
     double pPawrate2 = 0.000;
     int nHeight = pindexBest->nHeight;
+    ui->progressBar->setMaximum(LAST_POW_BLOCK);
     double nSubsidy = 50;
     uint64_t nMinWeight = 0, nMaxWeight = 0, nWeight = 0;
     pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
@@ -60,12 +61,12 @@ void CoinStats::updateStatistics() {
     QString stakemax = QString::number(nNetworkWeight);
     QString phase = "";
 
-    if (pindexBest->nHeight < 104000) {
+    if (pindexBest->nHeight < LAST_POW_BLOCK) {
         phase = "<p align=\"center\">PoW/PoS</p>";
         ui->progressBar->setValue(pindexBest->nHeight);
     } else {
         ui->progressBar->hide();
-        phase = "<p align=\"center\">PoS</p>";
+        phase = "<p align=\"center\">Pure proof of stake</p>";
     }
 
     QString subsidy = QString::number(nSubsidy, 'f', 6);
@@ -79,63 +80,63 @@ void CoinStats::updateStatistics() {
 
     if (nHeight > heightPrevious) {
         ui->progressBar->setValue(nHeight);
-        ui->heightBox->setText("<font color=\"white\">" + height + "</font>");
+        ui->heightBox->setText("<font color=\"black\">" + height + "</font>");
     } else {
         ui->heightBox->setText(height);
     }
 
     if (0 > stakeminPrevious) {
-        ui->minBox->setText("<font color=\"white\">" + stakemin + "</font>");
+        ui->minBox->setText("<font color=\"black\">" + stakemin + "</font>");
     } else {
         ui->minBox->setText(stakemin);
     }
 
     if (0 > stakemaxPrevious) {
-        ui->maxBox->setText("<font color=\"white\">" + stakemax + "</font>");
+        ui->maxBox->setText("<font color=\"black\">" + stakemax + "</font>");
     } else {
         ui->maxBox->setText(stakemax);
     }
 
     if (phase != stakecPrevious) {
-        ui->cBox->setText("<font color=\"white\">" + phase + "</font>");
+        ui->cBox->setText("<font color=\"black\">" + phase + "</font>");
     } else {
         ui->cBox->setText(phase);
     }
 
     if (marketcap > marketcapPrevious) {
-        ui->marketcap->setText("<font color=\"white\">$" + QString::number(marketcap) + "</font>");
+        ui->marketcap->setText("<font color=\"black\">$ " + QString::number(marketcap) + "</font>");
     } else if (marketcap < marketcapPrevious) {
-        ui->marketcap->setText("<font color=\"white\">$" + QString::number(marketcap) + "</font>");
+        ui->marketcap->setText("<font color=\"black\">$ " + QString::number(marketcap) + "</font>");
     } else {
         ui->marketcap->setText("$" + QString::number(marketcap));
     }
 
     if (pHardness2 > hardnessPrevious2) {
-        ui->diffBox2->setText("<font color=\"white\">" + hardness2 + "</font>");
+        ui->diffBox2->setText("<font color=\"black\">" + hardness2 + "</font>");
     } else if (pHardness2 < hardnessPrevious2) {
-        ui->diffBox2->setText("<font color=\"white\">" + hardness2 + "</font>");
+        ui->diffBox2->setText("<font color=\"black\">" + hardness2 + "</font>");
     } else {
         ui->diffBox2->setText(hardness2);
     }
 
     if (Qlpawrate != pawratePrevious) {
-        ui->localBox->setText("<font color=\"white\">" + Qlpawrate + "</font>");
+        ui->localBox->setText("<font color=\"black\">" + Qlpawrate + "</font>");
     } else {
         ui->localBox->setText(Qlpawrate);
     }
 
     if (peers > connectionPrevious) {
-        ui->connectionBox->setText("<font color=\"white\">" + QPeers + "</font>");
+        ui->connectionBox->setText("<font color=\"black\">" + QPeers + "</font>");
     } else if (peers < connectionPrevious) {
-        ui->connectionBox->setText("<font color=\"white\">" + QPeers + "</font>");
+        ui->connectionBox->setText("<font color=\"black\">" + QPeers + "</font>");
     } else {
         ui->connectionBox->setText(QPeers);
     }
 
     if (volume > volumePrevious) {
-        ui->volumeBox->setText("<font color=\"white\">" + qVolume + " ERC" + "</font>");
+        ui->volumeBox->setText("<font color=\"black\">" + qVolume + " ERC" + "</font>");
     } else if (volume < volumePrevious) {
-        ui->volumeBox->setText("<font color=\"white\">" + qVolume + " ERC" + "</font>");
+        ui->volumeBox->setText("<font color=\"black\">" + qVolume + " ERC" + "</font>");
     } else {
         ui->volumeBox->setText(qVolume + " ERC");
     }
