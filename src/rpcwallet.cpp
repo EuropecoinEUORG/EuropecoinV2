@@ -71,6 +71,25 @@ string AccountFromValue(const Value& value)
     return strAccount;
 }
 
+// Gets wallet lock status
+std::string walletstatus() {
+    if (pwalletMain->IsLocked() && !fWalletUnlockStakingOnly)
+        return "locked";
+    else if (fWalletUnlockStakingOnly)
+        return "unlocked-staking-only";
+    else return "unlocked";
+}
+
+// Converts timestamps to human-readable time
+string humanreadabledate(int64_t epoch) {
+    char str[30];
+    time_t time = epoch;
+    struct tm ts;
+    ts = *localtime(&time);
+    strftime(str, sizeof(str), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
+    return str;
+}
+
 Value getinfo(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 0)
@@ -103,13 +122,21 @@ Value getinfo(const Array& params, bool fHelp)
     obj.push_back(Pair("keypoololdest", (boost::int64_t)pwalletMain->GetOldestKeyPoolTime()));
     obj.push_back(Pair("keypoolsize",   (int)pwalletMain->GetKeyPoolSize()));
     obj.push_back(Pair("paytxfee",      ValueFromAmount(nTransactionFee)));
-    obj.push_back(Pair("mininput",      ValueFromAmount(nMinimumInputValue)));
-    if (pwalletMain->IsCrypted())
+    obj.push_back(Pair("mininput",      ValueFromAmount(nMinimumInputValue)));   
+    obj.push_back(Pair("wallet",        walletstatus()));
+    if (pwalletMain->IsCrypted() && !pwalletMain->IsLocked() && !fWalletUnlockStakingOnly) {
         obj.push_back(Pair("unlocked_until", (boost::int64_t)nWalletUnlockTime / 1000));
+        obj.push_back(Pair("unlocked_until_hr", humanreadabledate((boost::int64_t)nWalletUnlockTime / 1000)));
+    }
     obj.push_back(Pair("errors",        GetWarnings("statusbar")));
-    return obj;
-}
+    obj.push_back(Pair("encrypted",     (pwalletMain->IsCrypted() ? "true" : "false")));
+    if (GetNumBlocksOfPeers() > nBestHeight)
+        obj.push_back(Pair("synced",    "false"));
+    else
+        obj.push_back(Pair("synced",     "true"));
 
+    return obj;
+    }
 
 Value getnewpubkey(const Array& params, bool fHelp)
 {
@@ -1515,6 +1542,7 @@ Value walletlock(const Array& params, bool fHelp)
         LOCK(cs_nWalletUnlockTime);
         pwalletMain->Lock();
         nWalletUnlockTime = 0;
+        fWalletUnlockStakingOnly = false;
     }
 
     return Value::null;

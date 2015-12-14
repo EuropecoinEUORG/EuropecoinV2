@@ -53,9 +53,8 @@ static const int fHaveUPnP = false;
 static const uint256 hashGenesisBlock("00000af3c43629a34b3027784dd9f073899bf70dcb3bd4db9cdbf9e9185aeadf");
 static const uint256 hashGenesisBlockTestNet("00000af3c43629a34b3027784dd9f073899bf70dcb3bd4db9cdbf9e9185aeadf");
 
-// updated due to security risk from 1 day to 14 minutes
-inline int64_t PastDrift(int64_t nTime)   { return nTime - 14 * 60; } // up to 14 minutes from the past
-inline int64_t FutureDrift(int64_t nTime) { return nTime + 14 * 60; } // up to 14 minutes from the future
+inline int64_t PastDrift(int64_t nTime)   { return nTime - 14 * 60; } // up to 12 minutes from the past
+inline int64_t FutureDrift(int64_t nTime) { return nTime + 14 * 60; } // up to 12 minutes from the future
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;

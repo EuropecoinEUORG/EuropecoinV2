@@ -469,6 +469,8 @@ bool CTransaction::CheckTransaction() const
         return DoS(10, error("CTransaction::CheckTransaction() : vin empty"));
     if (vout.empty())
         return DoS(10, error("CTransaction::CheckTransaction() : vout empty"));
+    if (nTime > FutureDrift(GetAdjustedTime()))
+        return DoS(10, error("CTransaction::CheckTransaction() : timestamp is too far into the future"));
     // Size limits
     if (::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > MAX_BLOCK_SIZE)
         return DoS(100, error("CTransaction::CheckTransaction() : size limits failed"));
@@ -990,23 +992,30 @@ int64_t GetProofOfWorkReward(int64_t nFees)
     return nSubsidy + nFees;
 }
 
-const int DAILY_BLOCKCOUNT =  1440;
-
 // miner's coin stake reward based on coin age spent (coin-days)
 int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
 {
     int64_t nSubsidy = 0;
 
     if(pindexBest->nHeight <= FORK_BLOCK) {
+
+        // old dev's attempt of create a variable PoS......
+        int DAILY_BLOCKCOUNT = 1440;
         int64_t nRewardCoinYear = MAX_MINT_PROOF_OF_STAKE;
-        nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
-    } else {
-        // VPoS math is in CTransaction::GetCoinAge
+
+        if(pindexBest->nHeight < 7 * DAILY_BLOCKCOUNT)
+            nRewardCoinYear /= 2;
+        else if(pindexBest->nHeight < 14 * DAILY_BLOCKCOUNT)
+            nRewardCoinYear *= 2;
+        else if(pindexBest->nHeight < 21 * DAILY_BLOCKCOUNT)
+            nRewardCoinYear *=3;
+
+            nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
+    } else // VPoS math is in CTransaction::GetCoinAge
         nSubsidy = nCoinAge / 365;
-    }
 
     if (fDebug && GetBoolArg("-printcreation"))
-        printf("GetProofOfWorkReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
+        printf("GetProofOfStakeReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
 
     return nSubsidy + nFees;
 }
@@ -2158,9 +2167,16 @@ bool CBlock::AcceptBlock()
     if (nBits != GetNextTargetRequired(pindexPrev, IsProofOfStake()))
         return DoS(100, error("AcceptBlock() : incorrect %s", IsProofOfWork() ? "proof-of-work" : "proof-of-stake"));
 
+    int64_t nMedianTimePast = pindexPrev->GetMedianTimePast();
+    int nMaxOffset = 12 * 60 * 60; // 12 hours
+
     // Check timestamp against prev
-    if (GetBlockTime() <= pindexPrev->GetPastTimeLimit() || FutureDrift(GetBlockTime()) < pindexPrev->GetBlockTime())
+    if (GetBlockTime() <= nMedianTimePast || FutureDrift(GetBlockTime()) < pindexPrev->GetBlockTime())
         return error("AcceptBlock() : block's timestamp is too early");
+
+    // Don't accept blocks with future timestamps
+    if (pindexPrev->nHeight > 1 && nMedianTimePast + nMaxOffset < GetBlockTime())
+        return error("AcceptBlock() : block's timestamp is too far in the future");
 
     // Check that all transactions are finalized
     BOOST_FOREACH(const CTransaction& tx, vtx)
