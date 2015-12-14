@@ -2169,6 +2169,8 @@ bool CBlock::AcceptBlock()
 
     int64_t nMedianTimePast = pindexPrev->GetMedianTimePast();
     int nMaxOffset = 12 * 60 * 60; // 12 hours
+    if (pindexPrev->nTime < 1450915200)
+        nMaxOffset = 7 * 86400; // One week until 24 Dec, 2015
 
     // Check timestamp against prev
     if (GetBlockTime() <= nMedianTimePast || FutureDrift(GetBlockTime()) < pindexPrev->GetBlockTime())
