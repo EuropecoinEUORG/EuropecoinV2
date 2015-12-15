@@ -38,7 +38,6 @@ static const unsigned int MAX_INV_SZ = 50000;
 static const int64_t MIN_TX_FEE = 10000;
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 static const int64_t MAX_MONEY = 384000000 * COIN;
-static const int64_t MAX_MINT_PROOF_OF_STAKE = 0.05 * COIN;	// before fork: 5% annual interest
 
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 // Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp.
@@ -53,8 +52,10 @@ static const int fHaveUPnP = false;
 static const uint256 hashGenesisBlock("00000af3c43629a34b3027784dd9f073899bf70dcb3bd4db9cdbf9e9185aeadf");
 static const uint256 hashGenesisBlockTestNet("00000af3c43629a34b3027784dd9f073899bf70dcb3bd4db9cdbf9e9185aeadf");
 
-inline int64_t PastDrift(int64_t nTime)   { return nTime - 14 * 60; } // up to 12 minutes from the past
-inline int64_t FutureDrift(int64_t nTime) { return nTime + 14 * 60; } // up to 12 minutes from the future
+// time drift less than 12 hours causes the wallet stuck at some height when syncing from scratch
+// note: original time drift was 1 day
+inline int64_t PastDrift(int64_t nTime)   { return nTime - 12 * 60 * 60; } // up to 12 hours from the past
+inline int64_t FutureDrift(int64_t nTime) { return nTime + 12 * 60 * 60; } // up to 12 hours from the future
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;

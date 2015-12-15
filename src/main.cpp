@@ -469,7 +469,8 @@ bool CTransaction::CheckTransaction() const
         return DoS(10, error("CTransaction::CheckTransaction() : vin empty"));
     if (vout.empty())
         return DoS(10, error("CTransaction::CheckTransaction() : vout empty"));
-    if (nTime > FutureDrift(GetAdjustedTime()))
+    // Comes into force since 24 December 2015
+    if (nTime > 1450915200 && nTime > FutureDrift(GetAdjustedTime()))
         return DoS(10, error("CTransaction::CheckTransaction() : timestamp is too far into the future"));
     // Size limits
     if (::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > MAX_BLOCK_SIZE)
@@ -995,22 +996,33 @@ int64_t GetProofOfWorkReward(int64_t nFees)
 // miner's coin stake reward based on coin age spent (coin-days)
 int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
 {
-    int64_t nSubsidy = 0;
+	int64_t nSubsidy = 0;
 
     if(pindexBest->nHeight <= FORK_BLOCK) {
 
-        // old dev's attempt of create a variable PoS......
+        // old dev's attempt of create a variable PoS....
+        // code enforced until block 820.000
+        int64_t nRewardCoinYear = 0;
+        int64_t MAX_MINT_PROOF_OF_STAKE = 1 * CENT;
         int DAILY_BLOCKCOUNT = 1440;
-        int64_t nRewardCoinYear = MAX_MINT_PROOF_OF_STAKE;
 
         if(pindexBest->nHeight < 7 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear /= 2;
+            nRewardCoinYear = 2.5 * MAX_MINT_PROOF_OF_STAKE;
         else if(pindexBest->nHeight < 14 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear *= 2;
+            nRewardCoinYear = 10 * MAX_MINT_PROOF_OF_STAKE;
         else if(pindexBest->nHeight < 21 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear *=3;
+            nRewardCoinYear = 15 * MAX_MINT_PROOF_OF_STAKE;
+        else
+            nRewardCoinYear = 5 * MAX_MINT_PROOF_OF_STAKE;
 
+        // hard to understand why he did this....
+        if(pindexBest->nHeight > 21 * DAILY_BLOCKCOUNT)
+            nSubsidy = nCoinAge  / COIN * nRewardCoinYear / 365;
+        else
             nSubsidy = nCoinAge * nRewardCoinYear / 365 / COIN;
+
+        // old ProofOfStakeReward math ends here
+
     } else // VPoS math is in CTransaction::GetCoinAge
         nSubsidy = nCoinAge / 365;
 
