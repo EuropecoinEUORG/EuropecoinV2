@@ -380,6 +380,13 @@ inline bool IsSwitchChar(char c)
 #endif
 }
 
+namespace erc
+{
+    void *memrchr(const void *s, int c, size_t n);
+
+    int memcmp_nta(const void *cs, const void *ct, size_t count);
+}
+
 /**
  * Return string argument or default value
  *

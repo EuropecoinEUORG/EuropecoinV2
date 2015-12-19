@@ -548,6 +548,37 @@ void ParseParameters(int argc, const char* const argv[])
     }
 }
 
+namespace erc {
+void *memrchr(const void *s, int c, size_t n)
+{
+    if (n < 1)
+        return NULL;
+
+    unsigned char* cp = (unsigned char*) s + n;
+
+    do {
+        if (*(--cp) == (unsigned char) c)
+            return (void*) cp;
+    } while (--n != 0);
+
+    return NULL;
+}
+
+// memcmp_nta - memcmp that is secure against timing attacks
+// returns 0 if both areas are equal to each other, non-zero otherwise
+int memcmp_nta(const void *cs, const void *ct, size_t count)
+{
+    const unsigned char *su1, *su2;
+    int res = 0;
+
+    for (su1 = (unsigned char*)cs, su2 = (unsigned char*)ct;
+        0 < count; ++su1, ++su2, count--)
+        res |= (*su1 ^ *su2);
+
+    return res;
+}
+}
+
 std::string GetArg(const std::string& strArg, const std::string& strDefault)
 {
     if (mapArgs.count(strArg))

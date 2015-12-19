@@ -2505,12 +2505,13 @@ FILE* OpenBlockFile(unsigned int nFile, unsigned int nBlockPos, const char* pszM
 
 static unsigned int nCurrentBlockFile = 1;
 
-FILE* AppendBlockFile(unsigned int& nFileRet)
+FILE* AppendBlockFile(unsigned int& nFileRet, const char* fmode)
 {
     nFileRet = 0;
     while (true)
     {
-        FILE* file = OpenBlockFile(nCurrentBlockFile, 0, "ab");
+        FILE* file = OpenBlockFile(nCurrentBlockFile, 0, fmode);
+
         if (!file)
             return NULL;
         if (fseek(file, 0, SEEK_END) != 0)
@@ -2520,10 +2521,11 @@ FILE* AppendBlockFile(unsigned int& nFileRet)
         {
             nFileRet = nCurrentBlockFile;
             return file;
-        }
+        };
+
         fclose(file);
         nCurrentBlockFile++;
-    }
+    };
 }
 
 bool LoadBlockIndex(bool fAllowNew)

@@ -5,9 +5,18 @@
 
 #include "main.h"
 #include "bitcoinrpc.h"
+#include "init.h"
+#include "txdb.h"
+#include "kernel.h"
+#include "checkpoints.h"
+#include "protocol.h"
+#include <errno.h>
 
 using namespace json_spirit;
 using namespace std;
+
+// see protocol.h:28
+#define MESSAGE_START_SIZE 4
 
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, json_spirit::Object& entry);
 extern enum Checkpoints::CPMode CheckpointsMode;
@@ -303,5 +312,220 @@ Value getcheckpoint(const Array& params, bool fHelp)
     if (mapArgs.count("-checkpointkey"))
         result.push_back(Pair("checkpointmaster", true));
 
+    return result;
+}
+
+Value rewindchain(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() < 1 || params.size() > 2)
+        throw runtime_error(
+            "rewindchain <number>\n"
+            "Remove <number> blocks from the chain.");
+
+    int nNumber = params[0].get_int();
+    if (nNumber < 0 || nNumber > nBestHeight)
+        throw runtime_error("Block number out of range.");
+
+    Object result;
+    int nRemoved = 0;
+
+    {
+    LOCK2(cs_main, pwalletMain->cs_wallet);
+
+
+    uint32_t nFileRet = 0;
+
+    uint8_t buffer[512];
+
+    printf("rewindchain %d\n", nNumber);
+
+    void* nFind;
+
+    for (int i = 0; i < nNumber; ++i)
+    {
+        memset(buffer, 0, sizeof(buffer));
+
+        FILE* fp = AppendBlockFile(nFileRet, "r+b");
+
+        if (!fp)
+        {
+            printf("AppendBlockFile failed.\n");
+            break;
+        };
+
+        errno = 0;
+        if (fseek(fp, 0, SEEK_END) != 0)
+        {
+            printf("fseek failed: %s\n", strerror(errno));
+            break;
+        };
+
+        long int fpos = ftell(fp);
+
+        if (fpos == -1)
+        {
+            printf("ftell failed: %s\n", strerror(errno));
+            break;
+        };
+
+        long int foundPos = -1;
+        long int readSize = sizeof(buffer) / 2;
+        while (fpos > 0)
+        {
+            if (fpos < (long int)sizeof(buffer) / 2)
+                readSize = fpos;
+
+            memcpy(buffer+readSize, buffer, readSize); // move last read data (incase token crosses a boundary)
+            fpos -= readSize;
+
+            if (fseek(fp, fpos, SEEK_SET) != 0)
+            {
+                printf("fseek failed: %s\n", strerror(errno));
+                break;
+            };
+
+            errno = 0;
+            if (fread(buffer, sizeof(uint8_t), readSize, fp) != (size_t)readSize)
+            {
+                if (errno != 0)
+                    printf("fread failed: %s\n", strerror(errno));
+                else
+                    printf("End of file.\n");
+                break;
+            };
+
+            uint32_t findPos = sizeof(buffer);
+            while (findPos > MESSAGE_START_SIZE)
+            {
+                if ((nFind = erc::memrchr(buffer, pchMessageStart[0], findPos-MESSAGE_START_SIZE)))
+                {
+                    if (memcmp(nFind, pchMessageStart, MESSAGE_START_SIZE) == 0)
+                    {
+                        foundPos = ((uint8_t*)nFind - buffer) + MESSAGE_START_SIZE;
+                        break;
+                    } else
+                    {
+                        findPos = ((uint8_t*)nFind - buffer);
+                        // -- step over matched char that wasn't pchMessageStart
+                        if (findPos > 0) // prevent findPos < 0 (unsigned)
+                            findPos--;
+                    };
+                } else
+                {
+                    break; // pchMessageStart[0] not found in buffer
+                };
+            };
+
+            if (foundPos > -1)
+                break;
+        };
+
+        printf("fpos %d, foundPos %d.\n", fpos, foundPos);
+
+        if (foundPos < 0)
+        {
+            printf("block start not found.\n");
+            fclose(fp);
+            break;
+        };
+
+        CAutoFile blkdat(fp, SER_DISK, CLIENT_VERSION);
+
+        if (fseek(blkdat, fpos+foundPos, SEEK_SET) != 0)
+        {
+            printf("fseek blkdat failed: %s\n", strerror(errno));
+            break;
+        };
+
+        unsigned int nSize;
+        blkdat >> nSize;
+        printf("nSize %u .\n", nSize);
+
+        if (nSize < 1 || nSize > MAX_BLOCK_SIZE)
+        {
+            printf("block size error %u\n", nSize);
+
+        };
+
+        CBlock block;
+        blkdat >> block;
+        uint256 hashblock = block.GetHash();
+        printf("hashblock %s .\n", hashblock.ToString().c_str());
+
+        std::map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.find(hashblock);
+        if (mi != mapBlockIndex.end() && (*mi).second)
+        {
+            printf("block is in main chain.\n");
+
+            if (!mi->second->pprev)
+            {
+                printf("! mi->second.pprev\n");
+            } else
+            {
+                {
+                    CBlock blockPrev; // strange way SetBestChain works, TODO: does it need the full block?
+                    if (!blockPrev.ReadFromDisk(mi->second->pprev))
+                    {
+                        printf("blockPrev.ReadFromDisk failed %s.\n", mi->second->pprev->GetBlockHash().ToString().c_str());
+                        break;
+                    };
+
+                    CTxDB txdb;
+                    if (!blockPrev.SetBestChain(txdb, mi->second->pprev))
+                    {
+                        printf("SetBestChain failed.\n");
+                    };
+                }
+                mi->second->pprev->pnext = NULL;
+            };
+
+            delete mi->second;
+            mapBlockIndex.erase(mi);
+        };
+
+        std::map<uint256, CBlock*>::iterator miOph = mapOrphanBlocks.find(hashblock);
+        if (miOph != mapOrphanBlocks.end())
+        {
+            printf("block is an orphan.\n");
+            mapOrphanBlocks.erase(miOph);
+        };
+
+        CTxDB txdb;
+        for (vector<CTransaction>::iterator it = block.vtx.begin(); it != block.vtx.end(); ++it)
+        {
+            printf("EraseTxIndex().\n");
+            txdb.EraseTxIndex(*it);
+        };
+
+        printf("EraseBlockIndex().\n");
+        txdb.EraseBlockIndex(hashblock);
+
+        errno = 0;
+        if (ftruncate(fileno(fp), fpos+foundPos-MESSAGE_START_SIZE) != 0)
+        {
+            printf("ftruncate failed: %s\n", strerror(errno));
+        };
+
+        printf("hashBestChain %s, nBestHeight %d\n", hashBestChain.ToString().c_str(), nBestHeight);
+
+        //fclose(fp); // ~CAutoFile() will close the file
+        nRemoved++;
+    };
+    }
+
+
+    result.push_back(Pair("no. blocks removed", itostr(nRemoved)));
+
+    result.push_back(Pair("hashBestChain", hashBestChain.ToString()));
+    result.push_back(Pair("nBestHeight", itostr(nBestHeight)));   
+
+    if (nRemoved == nNumber)
+        result.push_back(Pair("result", "success"));
+    else
+        result.push_back(Pair("result", "failure"));
+
+    // -- need restart, setStakeSeen etc
+    if (nRemoved > 0)
+        result.push_back(Pair("Further action", "Please restart Europecoin"));
     return result;
 }
