@@ -1947,8 +1947,8 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
                 nVariableStakeReward = 0.1 * COIN; // bonus rate for ~3 weeks after fork
             } else { // VPoS
 
-                // Counts how old this tx is (in weeks)
-                bnWeeksCounter = (int)((nTime - txPrev.nTime) / 604800);
+                // Counts how old this tx is in weeks (rounded to closest integer)
+                bnWeeksCounter = int(((nTime - txPrev.nTime) / 604800) + 0.5);
                 bnWeeksCounter = max(1, bnWeeksCounter);
 
                 if(bnWeeksCounter < nStakeSteps) {
