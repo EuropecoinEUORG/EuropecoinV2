@@ -836,30 +836,13 @@ bool AppInit2()
 
     // ********************************************************* Step 9: import blocks
 
+    std::vector<boost::filesystem::path> vImportFiles;
     if (mapArgs.count("-loadblock"))
     {
-        uiInterface.InitMessage(_("Importing blockchain data file."));
-
         BOOST_FOREACH(string strFile, mapMultiArgs["-loadblock"])
-        {
-            FILE *file = fopen(strFile.c_str(), "rb");
-            if (file)
-                LoadExternalBlockFile(file);
-        }
-        exit(0);
+            vImportFiles.push_back(strFile);
     }
-
-    filesystem::path pathBootstrap = GetDataDir() / "bootstrap.dat";
-    if (filesystem::exists(pathBootstrap)) {
-        uiInterface.InitMessage(_("Importing bootstrap blockchain data file."));
-
-        FILE *file = fopen(pathBootstrap.string().c_str(), "rb");
-        if (file) {
-            filesystem::path pathBootstrapOld = GetDataDir() / "bootstrap.dat.old";
-            LoadExternalBlockFile(file);
-            RenameOver(pathBootstrap, pathBootstrapOld);
-        }
-    }
+    NewThread(ThreadImport, &vImportFiles);
 
     // ********************************************************* Step 10: load peers
 
