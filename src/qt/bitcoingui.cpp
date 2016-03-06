@@ -28,7 +28,6 @@
 #include "wallet.h"
 #include "statisticspage.h"
 #include "tradingdialog.h"
-#include "staisybit.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -123,7 +122,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     statisticsPage = new StatisticsPage(this);
     tradingPage = new TradingPage(this);
-    staisybitPage = new StaisybitPage(this);
+    //staisybitPage = new StaisybitPage(this);
 
     centralWidget = new QStackedWidget(this);
     centralWidget->addWidget(overviewPage);
@@ -133,7 +132,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralWidget->addWidget(sendCoinsPage);
     centralWidget->addWidget(statisticsPage);
     centralWidget->addWidget(tradingPage);
-    centralWidget->addWidget(staisybitPage);
+    //centralWidget->addWidget(staisybitPage);
     setCentralWidget(centralWidget);
 
     // Create status bar
@@ -263,11 +262,11 @@ void BitcoinGUI::createActions()
     tradingAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
     tabGroup->addAction(tradingAction);
 
-    staisybitAction = new QAction(QIcon(":/icons/staisybit"), tr("Cloud Staking"), this);
-    staisybitAction->setToolTip(tr("Europecoin online staking wallet"));
-    staisybitAction->setCheckable(true);
-    staisybitAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
-    tabGroup->addAction(staisybitAction);
+    //staisybitAction = new QAction(QIcon(":/icons/staisybit"), tr("Cloud Staking"), this);
+    //staisybitAction->setToolTip(tr("Europecoin online staking wallet"));
+    //staisybitAction->setCheckable(true);
+    //staisybitAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_8));
+    //tabGroup->addAction(staisybitAction);
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
@@ -281,7 +280,7 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(statisticsAction, SIGNAL(triggered()), this, SLOT(gotoStatisticsPage()));
     connect(tradingAction, SIGNAL(triggered()), this, SLOT(gotoTradingPage()));
-    connect(staisybitAction, SIGNAL(triggered()), this, SLOT(gotoStaisybitPage()));
+    //connect(staisybitAction, SIGNAL(triggered()), this, SLOT(gotoStaisybitPage()));
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -376,7 +375,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(addressBookAction);
     toolbar->addAction(statisticsAction);
     toolbar->addAction(tradingAction);
-    toolbar->addAction(staisybitAction);
+    //toolbar->addAction(staisybitAction);
 
     QToolBar *toolbar2 = addToolBar(tr("Actions toolbar"));
     toolbar2->setStyleSheet("background: transparent; border: none;");
@@ -537,7 +536,7 @@ void BitcoinGUI::setNumConnections(int count)
 void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
 {
     // don't show / hide progress bar and its label if we have no connection to the network
-    if (!clientModel || clientModel->getNumConnections() == 0)
+    if (!clientModel || (clientModel->getNumConnections() == 0  && !clientModel->isImporting()))
     {
         progressBarLabel->setVisible(false);
         progressBar->setVisible(false);
@@ -555,7 +554,7 @@ void BitcoinGUI::setNumBlocks(int count, int nTotalBlocks)
 
         if (strStatusBarWarnings.isEmpty())
         {
-            progressBarLabel->setText(tr("Synchronizing with network..."));
+            progressBarLabel->setText(tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing with network..."));
             progressBarLabel->setVisible(true);
             progressBar->setFormat(tr("~%n block(s) remaining", "", nRemainingBlocks));
             progressBar->setMaximum(nTotalBlocks);
@@ -803,11 +802,11 @@ void BitcoinGUI::gotoTradingPage()
 
 void BitcoinGUI::gotoStaisybitPage()
 {
-    staisybitAction->setChecked(true);
-    centralWidget->setCurrentWidget(staisybitPage);
+    //staisybitAction->setChecked(true);
+    //centralWidget->setCurrentWidget(staisybitPage);
 
-    exportAction->setEnabled(false);
-    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+    //exportAction->setEnabled(false);
+    //disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
