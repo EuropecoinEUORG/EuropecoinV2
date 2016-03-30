@@ -1841,13 +1841,15 @@ bool CBlock::SetBestChain(CTxDB& txdb, CBlockIndex* pindexNew)
     nTransactionsUpdated++;
 
     uint256 nBestBlockTrust = pindexBest->nHeight != 0 ? (pindexBest->nChainTrust - pindexBest->pprev->nChainTrust) : pindexBest->nChainTrust;
-
+     int nHeight = pindexBest->nHeight + 1;
+    // BitSendDev 30-03-2016 Remove Debug text
+    if(nHeight >= 870000){
     printf("SetBestChain: new best=%s  height=%d  trust=%s  blocktrust=%"PRId64"  date=%s\n",
       hashBestChain.ToString().substr(0,20).c_str(), nBestHeight,
       CBigNum(nBestChainTrust).ToString().c_str(),
       nBestBlockTrust.Get64(),
       DateTimeStrFormat("%x %H:%M:%S", pindexBest->GetBlockTime()).c_str());
-
+    }
     // Check the version of the last 100 blocks to see if we need to upgrade:
     if (!fIsInitialDownload)
     {
@@ -2259,6 +2261,12 @@ bool CBlockIndex::IsSuperMajority(int minVersion, const CBlockIndex* pstart, uns
 
 bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 {
+    int nHeight = pindexBest->nHeight + 1;
+    // BitSendDev 30-03-2016 Test Fix for Fastsync
+    if(nHeight >= 870000)
+    {
+    // START    
+    
     // Check for duplicate
     uint256 hash = pblock->GetHash();
     if (mapBlockIndex.count(hash))
@@ -2362,6 +2370,8 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     if (pfrom && !CSyncCheckpoint::strMasterPrivKey.empty())
         Checkpoints::SendSyncCheckpoint(Checkpoints::AutoSelectSyncCheckpoint());
 
+} else { printf("Skipp ProcessBlock 2371 ");} // Ende BitSendDev 30-03-2016 Test Fix for Fastsync
+    
     return true;
 }
 
