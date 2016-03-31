@@ -471,10 +471,10 @@ bool CTransaction::CheckTransaction() const
     if (vout.empty())
         return DoS(10, error("CTransaction::CheckTransaction() : vout empty"));
     // Comes into force since 24 December 2015
-    /* BitSendDev 31.03.2016 DOS10 Error fix, die ganze Funktion ist unklar. Der Timestamp is 24.12.2015
-    if (nTime > 1450915200 && nTime > FutureDrift(GetAdjustedTime()))
+    //BitSendDev 31.03.2016 DOS10 Error fix. Der Timestamp neue Timestamp ist Human time (GMT): Fri, 31 Dec 2021 07:09:51 GMT
+    if (nTime > 1640934591 && nTime > FutureDrift(GetAdjustedTime()))
         return DoS(10, error("CTransaction::CheckTransaction() : timestamp is too far into the future"));
-      */
+
     // Size limits
     if (::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION) > MAX_BLOCK_SIZE)
         return DoS(100, error("CTransaction::CheckTransaction() : size limits failed"));
