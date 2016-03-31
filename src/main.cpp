@@ -2369,7 +2369,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         Checkpoints::SendSyncCheckpoint(Checkpoints::AutoSelectSyncCheckpoint());
 
 
-} // Ende BitSendDev 30-03-2016 Test Fix for Fastsync
+// Ende BitSendDev 30-03-2016 Test Fix for Fastsync
     
     return true;
 }
