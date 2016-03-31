@@ -2370,7 +2370,9 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     if (pfrom && !CSyncCheckpoint::strMasterPrivKey.empty())
         Checkpoints::SendSyncCheckpoint(Checkpoints::AutoSelectSyncCheckpoint());
 
-} else { printf("Skipp ProcessBlock 2371 ");} // Ende BitSendDev 30-03-2016 Test Fix for Fastsync
+} else { printf("Skipp ProcessBlock height=%d Main.cpp_2373\n", nHeight);
+    
+} // Ende BitSendDev 30-03-2016 Test Fix for Fastsync
     
     return true;
 }
