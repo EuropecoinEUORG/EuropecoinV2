@@ -2264,12 +2264,7 @@ bool CBlockIndex::IsSuperMajority(int minVersion, const CBlockIndex* pstart, uns
 
 bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 {
-    int nHeight = pindexBest->nHeight + 1;
-    // BitSendDev 30-03-2016 Test Fix for Fastsync
-    if(nHeight >= 870000)
-    {
-    // START    
-    
+
     // Check for duplicate
     uint256 hash = pblock->GetHash();
     if (mapBlockIndex.count(hash))
@@ -2373,8 +2368,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     if (pfrom && !CSyncCheckpoint::strMasterPrivKey.empty())
         Checkpoints::SendSyncCheckpoint(Checkpoints::AutoSelectSyncCheckpoint());
 
-} else { printf("Skipp ProcessBlock height=%d Main.cpp_2373\n", nHeight);
-    
+
 } // Ende BitSendDev 30-03-2016 Test Fix for Fastsync
     
     return true;
