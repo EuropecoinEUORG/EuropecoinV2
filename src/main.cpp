@@ -2373,7 +2373,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         }
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
-
+    if (fDebug)
     printf("ProcessBlock: ACCEPTED\n");
 
     // ppcoin: if responsible for sync-checkpoint send it
@@ -3426,7 +3426,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         CBlock block;
         vRecv >> block;
         uint256 hashBlock = block.GetHash();
-
+        
+        if (fDebug)
         printf("received block %s\n", hashBlock.ToString().substr(0,20).c_str());
         // block.print();
 
