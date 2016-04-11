@@ -1605,8 +1605,10 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
             // (actual=12892739 vs calculated=12892714) = difference 25
             // wrong rounded to closest integer
             // https://github.com/EuropecoinEUORG/EuropecoinV2/commit/a83bcb731427a7ed46a9232a1135fd9b9dfc7841
-            printf("Runddungsfehler Error 1607: %"PRId64" \n",nStakeReward - nCalculatedStakeReward);
-            if(nStakeReward - nCalculatedStakeReward >= 1000)
+              if (fDebug)
+                printf("Runddungsfehler Error 1607: %"PRId64" \n",nStakeReward - nCalculatedStakeReward);
+                
+            if(nStakeReward - nCalculatedStakeReward >= nStakeReward / 490000)
                 {
                  return DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%"PRId64" vs calculated=%"PRId64")", nStakeReward, nCalculatedStakeReward));
                 }
