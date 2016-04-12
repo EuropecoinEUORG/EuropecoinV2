@@ -1142,6 +1142,7 @@ static const char *strDNSSeed[][2] = {
     {"seed2", "1.erc.bitnodes.net"},
     {"seed3", "2.erc.bitnodes.net"},
     {"seed4", "3.erc.bitnodes.net"},
+    {"seed5", "europecoin.blockexplorers.net"},
 };
 
 void ThreadDNSAddressSeed(void* parg)
