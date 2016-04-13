@@ -1608,7 +1608,8 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
               if (fDebug)
                 printf("Runddungsfehler Error 1607: %"PRId64" \n",nStakeReward - nCalculatedStakeReward);
                 
-            if(nStakeReward - nCalculatedStakeReward >= nStakeReward / 490000)
+                // Note 13-04-2016 Incrase the tolerance from 1/490000 to 1/300000
+            if(nStakeReward - nCalculatedStakeReward >= nStakeReward / 300000)
                 {
                  return DoS(100, error("ConnectBlock() : coinstake pays too much(actual=%"PRId64" vs calculated=%"PRId64")", nStakeReward, nCalculatedStakeReward));
                 }
