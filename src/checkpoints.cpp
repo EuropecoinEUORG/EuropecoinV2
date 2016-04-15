@@ -255,7 +255,7 @@ namespace Checkpoints
                 return error("ResetSyncCheckpoint: SetBestChain failed for hardened checkpoint %s", hash.ToString().c_str());
             }
         }
-        /* BitSenddev 15-04-2016 Trouble with this function
+        // BitSenddev 15-04-2016 Trouble with this function
         else  if(!mapBlockIndex.count(hash))
         {
             // checkpoint block not yet accepted
@@ -263,7 +263,7 @@ namespace Checkpoints
             checkpointMessagePending.SetNull();
             printf("ResetSyncCheckpoint: pending for sync-checkpoint %s\n", hashPendingCheckpoint.ToString().c_str());
         }
-        */
+        
 
         BOOST_REVERSE_FOREACH(const MapCheckpoints::value_type& i, mapCheckpoints)
         {
@@ -377,6 +377,7 @@ bool CSyncCheckpoint::ProcessSyncCheckpoint(CNode* pfrom)
         return false;
 
     LOCK(Checkpoints::cs_hashSyncCheckpoint);
+    /* BitSenddev 15-04-2016 Test2 
     if (!mapBlockIndex.count(hashCheckpoint))
     {
         // We haven't received the checkpoint chain, keep the checkpoint as pending
@@ -393,6 +394,7 @@ bool CSyncCheckpoint::ProcessSyncCheckpoint(CNode* pfrom)
         }
         return false;
     }
+    */
 
     if (!Checkpoints::ValidateSyncCheckpoint(hashCheckpoint))
         return false;
