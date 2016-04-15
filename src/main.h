@@ -28,6 +28,7 @@ class CNode;
 
 static const int LAST_POW_BLOCK = 20160;
 static const int FORK_BLOCK = 820000;
+static const int DEBUG_BLOCK = 930000;
 static const int LAST_BLOCK_BONUS_RATE = 850240; // ~3 weeks after fork
 
 static const unsigned int MAX_BLOCK_SIZE = 1000000;
