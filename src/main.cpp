@@ -2203,6 +2203,9 @@ bool CBlock::AcceptBlock()
 
     // Verify hash target and signature of coinstake tx
     uint256 hashProofOfStake = 0, targetProofOfStake = 0;
+    // Add Debug Testfunktion
+    if(pindexBest->nHeight > DEBUG_BLOCK)
+    {
     if (IsProofOfStake())
     {
         if (!CheckProofOfStake(vtx[1], nBits, hashProofOfStake, targetProofOfStake))
@@ -2211,6 +2214,7 @@ bool CBlock::AcceptBlock()
             printf("WARNING: ProcessBlock(): check proof-of-stake failed for block %s\n", hash.ToString().c_str());
             return false; // do not error here as we expect this during initial block download
         }
+    }
     }
 
     bool cpSatisfies = Checkpoints::CheckSync(hash, pindexPrev);
