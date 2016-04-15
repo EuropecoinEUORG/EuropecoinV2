@@ -2253,7 +2253,11 @@ bool CBlock::AcceptBlock()
     }
 
     // ppcoin: check pending sync-checkpoint
+    // BitSenddev Disable this function 15-04-2016
+    
+    if (fDebug){
     Checkpoints::AcceptPendingSyncCheckpoint();
+	}
 
     return true;
 }
