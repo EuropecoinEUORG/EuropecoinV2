@@ -40,13 +40,13 @@ static const int MIN_PROTO_VERSION = 60015;
 static const int CADDR_TIME_VERSION = 31402;
 
 // only request blocks from nodes outside this range of versions
-static const int NOBLKS_VERSION_START = 60002;
-static const int NOBLKS_VERSION_END = 60014;
+static const int NOBLKS_VERSION_START = 60015;
+static const int NOBLKS_VERSION_END = 60016;
 
 // BIP 0031, pong message, is enabled for all versions AFTER this one
 static const int BIP0031_VERSION = 60000;
 
 // "mempool" command, enhanced "getdata" behavior starts with this version:
-static const int MEMPOOL_GD_VERSION = 60002;
+static const int MEMPOOL_GD_VERSION = 60015;
 
 #endif
