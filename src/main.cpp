@@ -1940,7 +1940,7 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
             if (fDebug && GetBoolArg("-printcoinage"))
                 printf("coin age nValueIn=%"PRId64" nTimeDiff=%d bnCentSecond=%s\n", nValueIn, nTime - txPrev.nTime, bnCentSecond.ToString().c_str());
 
-            printf("Europecoin: applied pre-fork coin age calcs");
+            // printf("Europecoin: applied pre-fork coin age calcs");
 
         } else {
 
