@@ -2216,6 +2216,18 @@ bool CBlock::AcceptBlock()
         }
     }
     }
+    if(fDebug)
+    {
+    if (IsProofOfStake())
+    {
+        if (!CheckProofOfStake(vtx[1], nBits, hashProofOfStake, targetProofOfStake))
+        {
+            //BitSend Sprungmarke AAA 31.03.2016
+            printf("WARNING: ProcessBlock(): check proof-of-stake failed for block %s\n", hash.ToString().c_str());
+            return false; // do not error here as we expect this during initial block download
+        }
+    }
+    }
 
     bool cpSatisfies = Checkpoints::CheckSync(hash, pindexPrev);
 
