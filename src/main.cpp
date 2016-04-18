@@ -1028,8 +1028,8 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
 
     } else // VPoS math is in CTransaction::GetCoinAge
         nSubsidy = nCoinAge / 365;
-//Activ Debug Line BitSenddev 18-04-2016
-//    if (fDebug && GetBoolArg("-printcreation"))
+
+    if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfStakeReward() : create=%s nSubsidy=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nSubsidy);
 
     return nSubsidy + nFees;
@@ -1962,11 +1962,8 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
 
             int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
             // include stake reward into nCoinAge math. We'll then need to change GetProofOfStakeReward() task
-            // BitSenddev 18-04-2016 alte Funktion war  
-	    // bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT;
             bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT * nVariableStakeReward / COIN;
-	 // Add Debug 18-04-2016 Bitsendev
-	 printf("coin age nValueIn=%"PRId64" nTimeDiff=%d bnCentSecond=%s nHeight:%d \n", nValueIn, nTime - txPrev.nTime, bnCentSecond.ToString().c_str(),pindex->nHeight);
+
             if (fDebug && GetBoolArg("-printcoinage"))
                 printf("coin age nValueIn=%"PRId64" nTimeDiff=%d bnCentSecond=%s\n", nValueIn, nTime - txPrev.nTime, bnCentSecond.ToString().c_str());
         }
