@@ -25,7 +25,7 @@ namespace Checkpoints
     static MapCheckpoints mapCheckpoints =
         boost::assign::map_list_of
         ( 0,         hashGenesisBlock )
-        ( 254838,    uint256("0xde6a01927d66274b854a28abab53613dbb3da2c9dc80b973a597a6416defb326") )
+        ( 500000,    uint256("0x9637b2b3f44668b315480aa7bab320fd04613ae62e3f5db50983093e36881ad3") )
 	( 876931,    uint256("0x4884a301c528549d4afb79a57c611193603382f7aebcccafa15c0764c4b9e8b3") )
     ;
 
@@ -377,7 +377,7 @@ bool CSyncCheckpoint::ProcessSyncCheckpoint(CNode* pfrom)
         return false;
 
     LOCK(Checkpoints::cs_hashSyncCheckpoint);
-    /* BitSenddev 15-04-2016 Test2 
+    // BitSenddev 15-04-2016 Test2 
     if (!mapBlockIndex.count(hashCheckpoint))
     {
         // We haven't received the checkpoint chain, keep the checkpoint as pending
@@ -394,7 +394,7 @@ bool CSyncCheckpoint::ProcessSyncCheckpoint(CNode* pfrom)
         }
         return false;
     }
-    */
+    
 
     if (!Checkpoints::ValidateSyncCheckpoint(hashCheckpoint))
         return false;
