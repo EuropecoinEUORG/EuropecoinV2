@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = Europecoin
 macx:TARGET = "Europecoin"
-VERSION = 2.0.2.5
+VERSION = 2.0.3.0
 INCLUDEPATH += src src/json src/qt
 QT += core gui network webkitwidgets webkit
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
