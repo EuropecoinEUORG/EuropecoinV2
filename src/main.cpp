@@ -1038,14 +1038,7 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
         int64_t MAX_MINT_PROOF_OF_STAKE = 1 * CENT;
         int DAILY_BLOCKCOUNT = 280;
 
-        if(pindexBest->nHeight < 7 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear = 2.5 * MAX_MINT_PROOF_OF_STAKE;
-        else if(pindexBest->nHeight < 14 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear = 10 * MAX_MINT_PROOF_OF_STAKE;
-        else if(pindexBest->nHeight < 21 * DAILY_BLOCKCOUNT)
-            nRewardCoinYear = 15 * MAX_MINT_PROOF_OF_STAKE;
-        else
-            nRewardCoinYear = 5 * MAX_MINT_PROOF_OF_STAKE;
+	nRewardCoinYear = 8 * MAX_MINT_PROOF_OF_STAKE;
 
         // hard to understand why he did this....
         if(pindexBest->nHeight > 21 * DAILY_BLOCKCOUNT)
