@@ -70,6 +70,8 @@ Value getmininginfo(const Array& params, bool fHelp)
 
     if(pindexBest->nHeight <= FORK_BLOCK) {
         obj.push_back(Pair("stakeinterest(%)",  "5%")); // pre-fork
+    } else if(pindexBest->nHeight > FORK_BLOCK2) {
+        obj.push_back(Pair("stakeinterest(%)",  "8%"));
     } else if(pindexBest->nHeight <= LAST_BLOCK_BONUS_RATE) {
         obj.push_back(Pair("stakeinterest(%)",  "10%")); // ~3 weeks of bonus rate after fork
     } else {
