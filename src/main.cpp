@@ -41,8 +41,8 @@ CBigNum bnProofOfWorkFirstBlock(~uint256(0) >> 30);
 
 //Changes in Blocktime
 int nHeight_FORK_BLOCK2 = pindexBest->nHeight + 1;
-if(nHeight_FORK_BLOCK2 > FORK_BLOCK2){unsigned int nTargetSpacing = 5 * 60;}// 300 seconds
-else{ unsigned int nTargetSpacing = 1 * 60;}// 60 seconds
+if(nHeight_FORK_BLOCK2 > FORK_BLOCK2){unsigned int nTargetSpacing = 5 * 60;}
+else{ unsigned int nTargetSpacing = 1 * 60;}
 unsigned int nRetarget = 1;
 unsigned int nStakeMinAge = 72 * 60 * 60; // 3 days
 unsigned int nStakeMaxAge = -1;           //unlimited
