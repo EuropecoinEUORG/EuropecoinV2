@@ -40,7 +40,6 @@ CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 CBigNum bnProofOfWorkFirstBlock(~uint256(0) >> 30);
 
 //Changes in Blocktime
-int nHeight_FORK_BLOCK2 = pindexBest->nHeight;
 unsigned int nTargetSpacing = 1 * 60;
 unsigned int nRetarget = 1;
 unsigned int nStakeMinAge = 72 * 60 * 60; // 3 days
