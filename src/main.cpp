@@ -1945,11 +1945,12 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
             return false; // unable to read block of previous transaction
         if (block.GetBlockTime() + nStakeMinAge > nTime)
             continue; // only count coins meeting min age requirement
-
+	
+	int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
         // Pre-fork coin age math
         if (pindexBest->nHeight <= FORK_BLOCK) {
 
-            int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
+            
             bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT;
 
             if (fDebug && GetBoolArg("-printcoinage"))
@@ -1959,8 +1960,7 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
 
         } 
         if (pindexBest->nHeight > FORK_BLOCK2) {
-
-            int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
+        	
             bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT;
 
             if (fDebug && GetBoolArg("-printcoinage"))
