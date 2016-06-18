@@ -42,10 +42,6 @@ CBigNum bnProofOfWorkFirstBlock(~uint256(0) >> 30);
 //Changes in Blocktime
 int nHeight_FORK_BLOCK2 = pindexBest->nHeight;
 unsigned int nTargetSpacing = 1 * 60;
-if(nHeight_FORK_BLOCK2 > FORK_BLOCK2)
-{ 
-	nTargetSpacing = 5 * 60;
-}
 unsigned int nRetarget = 1;
 unsigned int nStakeMinAge = 72 * 60 * 60; // 3 days
 unsigned int nStakeMaxAge = -1;           //unlimited
@@ -1039,7 +1035,7 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
         // code enforced until block 820.000
         int64_t nRewardCoinYear = 0;
         int64_t MAX_MINT_PROOF_OF_STAKE = 1 * CENT;
-        int DAILY_BLOCKCOUNT = 280;
+        int DAILY_BLOCKCOUNT = 1440;
 
 	nRewardCoinYear = 8 * MAX_MINT_PROOF_OF_STAKE;
 
