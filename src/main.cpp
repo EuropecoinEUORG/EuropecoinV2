@@ -1946,11 +1946,11 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
         if (block.GetBlockTime() + nStakeMinAge > nTime)
             continue; // only count coins meeting min age requirement
 	
-	int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
+	
         // Pre-fork coin age math
-        if (pindexBest->nHeight <= FORK_BLOCK) {
+        if (pindexBest->nHeight <= FORK_BLOCK || pindexBest->nHeight > FORK_BLOCK2) {
 
-            
+            int64_t nValueIn = txPrev.vout[txin.prevout.n].nValue;
             bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT;
 
             if (fDebug && GetBoolArg("-printcoinage"))
@@ -1959,18 +1959,8 @@ bool CTransaction::GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const
             // printf("Europecoin: applied pre-fork coin age calcs");
 
         } 
-        if (pindexBest->nHeight > FORK_BLOCK2) {
-        	
-            bnCentSecond += CBigNum(nValueIn) * (nTime-txPrev.nTime) / CENT;
-
-            if (fDebug && GetBoolArg("-printcoinage"))
-                printf("coin age nValueIn=%"PRId64" nTimeDiff=%d bnCentSecond=%s\n", nValueIn, nTime - txPrev.nTime, bnCentSecond.ToString().c_str());
-		
-             printf("Europecoin Version 2.0.3.0 \n");
-
-        }
-        else {
-
+        else 
+        {
             if(pindexBest->nHeight <= LAST_BLOCK_BONUS_RATE) {
                 nVariableStakeReward = 0.1 * COIN; // bonus rate for ~3 weeks after fork
             } else { // VPoS
