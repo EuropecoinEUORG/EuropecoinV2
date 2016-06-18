@@ -1,8 +1,8 @@
 Copyright (c) 2014 EuropeCoin Developers & the europecoin.eu.org
 Community
 
-Copyright (c) 2015 EuropeCoinEUORG Developers
-Matthias Klees
+Copyright (c) 2016 EuropeCoinEUORG Developers
+Matthias Klees 
 
 if you have questions or neeed help visit
 http://www.europecoin.eu.org
